@@ -9,8 +9,6 @@ ADDED from AndroidManifest.xml:1:1
 		ADDED from AndroidManifest.xml:4:5
 	android:versionCode
 		ADDED from AndroidManifest.xml:3:5
-		INJECTED from AndroidManifest.xml:0:0
-		INJECTED from AndroidManifest.xml:0:0
 	xmlns:android
 		ADDED from AndroidManifest.xml:1:11
 uses-permission#android.permission.VIBRATE

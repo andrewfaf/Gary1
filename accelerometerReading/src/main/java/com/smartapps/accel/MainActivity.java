@@ -76,33 +76,34 @@ public class MainActivity extends Activity implements SensorEventListener,
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
 	}
+    static int ACCE_FILTER_DATA_MIN_TIME = 2000; // 1000ms
+    private long lastSaved = System.currentTimeMillis();
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		if (started) {
-			double x = event.values[0];
-			double y = event.values[1];
-			double z = event.values[2];
-            long[] vpatternf = {0,100,1000,300};
-            long[] vpatternb = {0,1000,100,400};
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-// Simple converging average for proof of concept
-			LongTermAverage += z;
-			LongTermAverage /=2;
-			long timestamp = System.currentTimeMillis();
-//			AccelData data = new AccelData(timestamp, x, y, z);
-			AccelData data = new AccelData(timestamp, LongTermAverage, y, z);
-			sensorData.add(data);
-            txtAvg.setText(String.format("%.2f",LongTermAverage));
-            if (LongTermAverage > 3.5)
-            {
-                v.vibrate(vpatternf,-1);
+            if ((System.currentTimeMillis() - lastSaved) > ACCE_FILTER_DATA_MIN_TIME) {
+                lastSaved = System.currentTimeMillis();
+                double x = event.values[0];
+                double y = event.values[1];
+                double z = event.values[2];
+                long[] vpatternf = {0, 200, 200, 200, 200};
+                long[] vpatternb = {0, 400, 100, 400, 100};
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                // Simple converging average for proof of concept
+                LongTermAverage += z;
+                LongTermAverage /= 2;
+                long timestamp = System.currentTimeMillis();
+                //			AccelData data = new AccelData(timestamp, x, y, z);
+                AccelData data = new AccelData(timestamp, LongTermAverage, y, z);
+                sensorData.add(data);
+                txtAvg.setText(String.format("%.2f", LongTermAverage));
+                if (LongTermAverage > 3.5) {
+                    v.vibrate(vpatternf, -1);
+                } else if (LongTermAverage < -1.5) {
+                    v.vibrate(vpatternb, -1);
+                }
             }
-            else if (LongTermAverage < -1.5)
-            {
-                v.vibrate(vpatternb,-1);
-            }
-
         }
 
 	}
@@ -119,9 +120,9 @@ public class MainActivity extends Activity implements SensorEventListener,
 			started = true;
 			Sensor accel = sensorManager
 					.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-//			sensorManager.registerListener(this, accel,
-//					SensorManager.SENSOR_DELAY_FASTEST);
-			sensorManager.registerListener(this, accel,1000000); // Sample every second
+			sensorManager.registerListener(this, accel,
+					SensorManager.SENSOR_DELAY_NORMAL);
+//			sensorManager.registerListener(this, accel,20000000); // Sample every second
 			break;
 		case R.id.btnStop:
 			btnStart.setEnabled(true);
