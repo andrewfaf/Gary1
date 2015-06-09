@@ -48,4 +48,5 @@
         android:layout_toRightOf="@+id/chart_container"
         android:layout_alignParentRight="true" />
 
+
 </RelativeLayout>

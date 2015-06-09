@@ -2,6 +2,8 @@ package com.smartapps.accel;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,6 +11,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -36,6 +40,12 @@ public class MainActivity extends Activity implements SensorEventListener,
 	private double LongTermAverage = 0;
 	private LinearLayout layout;
 	private View mChart;
+	private boolean vibrateFwdOn = true;
+	private boolean vibrateBwdOn = true;
+	private SharedPreferences sharedPrefs;
+	static int ACCE_FILTER_DATA_MIN_TIME = 2000; // 1000ms
+	private long lastSaved = System.currentTimeMillis();
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,19 +67,50 @@ public class MainActivity extends Activity implements SensorEventListener,
 		if (sensorData == null || sensorData.size() == 0) {
 			btnUpload.setEnabled(false);
 		}
+		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		vibrateFwdOn = sharedPrefs.getBoolean("checkBoxFwd", true);
+		vibrateBwdOn = sharedPrefs.getBoolean("checkBoxBwd", true);
+
 
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
+
+		menu.add(Menu.NONE, 0, 0, "Show current settings");
+		return super.onCreateOptionsMenu(menu);
+/*		getMenuInflater().inflate(R.menu.activity_main, menu);
+
 		return true;
+*/
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
-		switch (item.getItemId()) {
+		Intent intent = new Intent(this,PrefsActivity.class);
+		startActivity(intent);
+		return true;
+/*
+		if (item.getItemId() == R.id.menu_red)
+		{
+			vibrateFwdOn = true;
+		}
+		else
+		{
+			vibrateFwdOn = false;
+		}
+		if (item.getItemId() == R.id.menu_green)
+		{
+			vibrateBwdOn = true;
+		}
+		else
+		{
+			vibrateBwdOn = false;
+		}
+
+*/
+/*		switch (item.getItemId()) {
 			case R.id.menu_red:
 				if (item.isChecked()) item.setChecked(false);
 				else item.setChecked(true);
@@ -94,6 +135,8 @@ public class MainActivity extends Activity implements SensorEventListener,
 				return super.onOptionsItemSelected(item);
 		}
 
+		return super.onOptionsItemSelected(item);
+*/
 	}
 
 	@Override
@@ -114,8 +157,6 @@ public class MainActivity extends Activity implements SensorEventListener,
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
 	}
-    static int ACCE_FILTER_DATA_MIN_TIME = 2000; // 1000ms
-    private long lastSaved = System.currentTimeMillis();
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
@@ -136,9 +177,12 @@ public class MainActivity extends Activity implements SensorEventListener,
                 AccelData data = new AccelData(timestamp, LongTermAverage, y, z);
                 sensorData.add(data);
                 txtAvg.setText(String.format("%.2f", LongTermAverage));
-                if (LongTermAverage > 3.5) {
+				sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+				vibrateFwdOn = sharedPrefs.getBoolean("checkBoxFwd", true);
+				vibrateBwdOn = sharedPrefs.getBoolean("checkBoxBwd", true);
+                if ((LongTermAverage > 3.5) && vibrateFwdOn) {
                     v.vibrate(vpatternf, -1);
-                } else if (LongTermAverage < -1.5) {
+                } else if ((LongTermAverage < -1.5) &&vibrateBwdOn) {
                     v.vibrate(vpatternb, -1);
                 }
             }

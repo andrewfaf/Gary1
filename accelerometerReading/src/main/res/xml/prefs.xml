@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+<PreferenceCategory
+    android:summary="Vibrator Behaviour"
+    android:title="Settings" >
+    <CheckBoxPreference
+        android:key="checkBoxFwd"
+        android:summary="On/Off"
+        android:title="Vibrate when Forward?" />
+
+    <CheckBoxPreference
+        android:key="checkBoxBwd"
+        android:summary="On/Off"
+        android:title="Vibrate when Backward?" />
+</PreferenceCategory>
+</PreferenceScreen>
