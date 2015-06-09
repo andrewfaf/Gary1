@@ -23,6 +23,11 @@
         <activity
             android:name=".PrefsActivity" >
         </activity>
+
+        <activity
+            android:name=".ShowSettingsActivity" >
+        </activity>
+
     </application>
 
 </manifest>

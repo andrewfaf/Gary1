@@ -11,7 +11,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,8 +39,8 @@ public class MainActivity extends Activity implements SensorEventListener,
 	private double LongTermAverage = 0;
 	private LinearLayout layout;
 	private View mChart;
-	private boolean vibrateFwdOn = true;
-	private boolean vibrateBwdOn = true;
+	public static boolean vibrateFwdOn = true;
+	public static boolean vibrateBwdOn = true;
 	private SharedPreferences sharedPrefs;
 	static int ACCE_FILTER_DATA_MIN_TIME = 2000; // 1000ms
 	private long lastSaved = System.currentTimeMillis();
@@ -77,7 +76,8 @@ public class MainActivity extends Activity implements SensorEventListener,
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
-		menu.add(Menu.NONE, 0, 0, "Show current settings");
+		menu.add(Menu.NONE, 0, 0, "Set current settings");
+		menu.add(Menu.NONE, 1, 0, "Show current settings");
 		return super.onCreateOptionsMenu(menu);
 /*		getMenuInflater().inflate(R.menu.activity_main, menu);
 
@@ -85,58 +85,30 @@ public class MainActivity extends Activity implements SensorEventListener,
 */
 	}
 
+	public boolean getvibrateFwdOn()
+	{
+		return vibrateFwdOn == true;
+	}
+
+	boolean getvibrateBwdOn()
+	{
+		return vibrateBwdOn == true;
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
-		Intent intent = new Intent(this,PrefsActivity.class);
-		startActivity(intent);
-		return true;
-/*
-		if (item.getItemId() == R.id.menu_red)
-		{
-			vibrateFwdOn = true;
+		switch (item.getItemId()) {
+			case 0:
+				Intent intent = new Intent(this, PrefsActivity.class);
+				startActivity(intent);
+				return true;
+			case 1:
+				startActivity(new Intent(this, ShowSettingsActivity.class));
+				return true;
 		}
-		else
-		{
-			vibrateFwdOn = false;
-		}
-		if (item.getItemId() == R.id.menu_green)
-		{
-			vibrateBwdOn = true;
-		}
-		else
-		{
-			vibrateBwdOn = false;
-		}
+		return false;
 
-*/
-/*		switch (item.getItemId()) {
-			case R.id.menu_red:
-				if (item.isChecked()) item.setChecked(false);
-				else item.setChecked(true);
-				layout.setBackgroundColor(android.graphics.Color.RED);
-				return true;
-			case R.id.menu_green:
-				if (item.isChecked()) item.setChecked(false);
-				else item.setChecked(true);
-				layout.setBackgroundColor(android.graphics.Color.GREEN);
-				return true;
-			case R.id.menu_yellow:
-				if (item.isChecked()) item.setChecked(false);
-				else item.setChecked(true);
-				layout.setBackgroundColor(android.graphics.Color.YELLOW);
-				return true;
-			case R.id.menu_blue:
-				if (item.isChecked()) item.setChecked(false);
-				else item.setChecked(true);
-				layout.setBackgroundColor(android.graphics.Color.BLUE);
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-
-		return super.onOptionsItemSelected(item);
-*/
 	}
 
 	@Override
@@ -154,6 +126,14 @@ public class MainActivity extends Activity implements SensorEventListener,
 	}
 
 	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (started == true) {
+			sensorManager.unregisterListener(this);
+		}
+	}
+
+	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
 	}
@@ -161,13 +141,15 @@ public class MainActivity extends Activity implements SensorEventListener,
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		if (started) {
-            if ((System.currentTimeMillis() - lastSaved) > ACCE_FILTER_DATA_MIN_TIME) {
+			sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+//            if ((System.currentTimeMillis() - lastSaved) > ACCE_FILTER_DATA_MIN_TIME) {
+			if ((System.currentTimeMillis() - lastSaved) > Integer.parseInt(sharedPrefs.getString("updates_interval","1000"))) {
                 lastSaved = System.currentTimeMillis();
                 double x = event.values[0];
                 double y = event.values[1];
                 double z = event.values[2];
-                long[] vpatternf = {0, 200, 200, 200, 200};
-                long[] vpatternb = {0, 400, 100, 400, 100};
+                long[] vpatternf = {0,63,37,63,137,100,137,63,137,100};
+                long[] vpatternb = {0,125,28,125,28,113,28,43,10,113,28};
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 // Simple converging average for proof of concept
                 LongTermAverage += z;
@@ -177,9 +159,10 @@ public class MainActivity extends Activity implements SensorEventListener,
                 AccelData data = new AccelData(timestamp, LongTermAverage, y, z);
                 sensorData.add(data);
                 txtAvg.setText(String.format("%.2f", LongTermAverage));
-				sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
 				vibrateFwdOn = sharedPrefs.getBoolean("checkBoxFwd", true);
 				vibrateBwdOn = sharedPrefs.getBoolean("checkBoxBwd", true);
+
                 if ((LongTermAverage > 3.5) && vibrateFwdOn) {
                     v.vibrate(vpatternf, -1);
                 } else if ((LongTermAverage < -1.5) &&vibrateBwdOn) {
