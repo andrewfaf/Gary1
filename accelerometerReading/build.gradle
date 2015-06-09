@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 15
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
     defaultConfig {
         applicationId "com.smartapps.accel"
-        minSdkVersion 15
-        targetSdkVersion 15
+        minSdkVersion 18
+        targetSdkVersion 22
     }
     buildTypes {
         release {
@@ -19,6 +19,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:18.+'
     compile files('libs/achartengine-1.0.0.jar')
+    compile 'com.android.support:appcompat-v7:22.2.0'
 }
