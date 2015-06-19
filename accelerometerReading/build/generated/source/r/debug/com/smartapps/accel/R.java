@@ -19,16 +19,20 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
+        public static final int BackwardThresholdtextView=0x7f090008;
+        public static final int BackwardVibratecheckBox=0x7f09000a;
+        public static final int ForwardThresholdtextView=0x7f090007;
+        public static final int ForwardVibratecheckBox=0x7f090009;
+        public static final int UpdateIntervaltextView=0x7f09000b;
         public static final int btnStart=0x7f090001;
         public static final int btnStop=0x7f090002;
         public static final int btnUpload=0x7f090003;
         public static final int buttons=0x7f090000;
         public static final int chart_container=0x7f090005;
-        public static final int menu_blue=0x7f09000b;
-        public static final int menu_green=0x7f090009;
-        public static final int menu_red=0x7f090008;
-        public static final int menu_yellow=0x7f09000a;
-        public static final int settings_text_view=0x7f090007;
+        public static final int menu_blue=0x7f09000f;
+        public static final int menu_green=0x7f09000d;
+        public static final int menu_red=0x7f09000c;
+        public static final int menu_yellow=0x7f09000e;
         public static final int settingstext=0x7f090006;
         public static final int textView=0x7f090004;
     }
@@ -37,7 +41,7 @@ public final class R {
         public static final int settings_display=0x7f030001;
     }
     public static final class menu {
-        public static final int activity_main=0x7f080000;
+        public static final int activity_menu=0x7f080000;
     }
     public static final class string {
         public static final int app_name=0x7f070000;

@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements SensorEventListener,
 	public static boolean vibrateFwdOn = true;
 	public static boolean vibrateBwdOn = true;
 	private SharedPreferences sharedPrefs;
-	static int ACCE_FILTER_DATA_MIN_TIME = 2000; // 1000ms
+//	static int ACCE_FILTER_DATA_MIN_TIME = 2000; // 1000ms
 	private long lastSaved = System.currentTimeMillis();
 
 
@@ -79,22 +79,22 @@ public class MainActivity extends Activity implements SensorEventListener,
 		menu.add(Menu.NONE, 0, 0, "Set current settings");
 		menu.add(Menu.NONE, 1, 0, "Show current settings");
 		return super.onCreateOptionsMenu(menu);
-/*		getMenuInflater().inflate(R.menu.activity_main, menu);
+/*		getMenuInflater().inflate(R.menu.activity_menu, menu);
 
 		return true;
 */
 	}
 
-	public boolean getvibrateFwdOn()
+/*	public boolean getvibrateFwdOn()
 	{
-		return vibrateFwdOn == true;
+		return vibrateFwdOn;
 	}
 
 	boolean getvibrateBwdOn()
 	{
-		return vibrateBwdOn == true;
+		return vibrateBwdOn;
 	}
-
+*/
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -142,7 +142,6 @@ public class MainActivity extends Activity implements SensorEventListener,
 	public void onSensorChanged(SensorEvent event) {
 		if (started) {
 			sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-//            if ((System.currentTimeMillis() - lastSaved) > ACCE_FILTER_DATA_MIN_TIME) {
 			if ((System.currentTimeMillis() - lastSaved) > Integer.parseInt(sharedPrefs.getString("updates_interval","1000"))) {
                 lastSaved = System.currentTimeMillis();
                 double x = event.values[0];
@@ -187,7 +186,6 @@ public class MainActivity extends Activity implements SensorEventListener,
 					.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 			sensorManager.registerListener(this, accel,
 					SensorManager.SENSOR_DELAY_NORMAL);
-//			sensorManager.registerListener(this, accel,20000000); // Sample every second
 			break;
 		case R.id.btnStop:
 			btnStart.setEnabled(true);

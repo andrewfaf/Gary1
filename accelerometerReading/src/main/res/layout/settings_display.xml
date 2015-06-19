@@ -4,9 +4,44 @@
     android:layout_height="match_parent"
     android:id="@+id/settingstext">
 
-        <TextView
-            android:id="@+id/settings_text_view"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Forward Threshold"
+        android:id="@+id/ForwardThresholdtextView"
+        android:inputType="none"
+        android:layout_gravity="left"
+        android:gravity="left" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Backward Threshold"
+        android:id="@+id/BackwardThresholdtextView"
+        android:layout_marginTop="10dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forward Vibrate"
+        android:id="@+id/ForwardVibratecheckBox"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:checked="false" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Backward Vibrate"
+        android:id="@+id/BackwardVibratecheckBox"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Update Interval"
+        android:id="@+id/UpdateIntervaltextView" />
+
 </LinearLayout>
