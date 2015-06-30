@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Hold Device in the orientation it will sit in your pocket, with the front of the phone facing you. When you put the phone in your pocket make sure the face of the phone is against you, i.e. the back of the phone if facing away from you."
+        android:id="@+id/textView2"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Press the Start Button when ready."
+        android:id="@+id/textView3"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calibrate"
+        android:id="@+id/calibrateButton"
+        android:layout_gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/calibrationMessagetextView"/>
+
+</LinearLayout>

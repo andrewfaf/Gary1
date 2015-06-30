@@ -50,5 +50,32 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/xAxistextView"
+        android:layout_below="@+id/chart_container"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/yAxistextView"
+        android:layout_below="@+id/xAxistextView"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/zAxistextView"
+        android:layout_below="@+id/yAxistextView"
+        android:layout_alignParentStart="true"/>
+
 
 </RelativeLayout>
