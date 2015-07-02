@@ -27,6 +27,14 @@
         android:layout_gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
+    <Button
+        android:layout_width="111dp"
+        android:layout_height="wrap_content"
+        android:text="Return"
+        android:id="@+id/endcalibratebutton"
+        android:layout_gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

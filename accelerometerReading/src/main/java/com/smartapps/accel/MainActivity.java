@@ -56,8 +56,10 @@ public class MainActivity extends Activity implements OnClickListener {
         layout = (LinearLayout) findViewById(R.id.chart_container);
 //        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 //        sensorData = new ArrayList<AccelData>();
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         lAccelHandler = new AccelHandler(this,
-                Integer.parseInt(sharedPrefs.getString("updates_interval", "1000")) );
+                Integer.parseInt(sharedPrefs.getString("updates_interval", "1000")), false);
 
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStop = (Button) findViewById(R.id.btnStop);
@@ -75,7 +77,7 @@ public class MainActivity extends Activity implements OnClickListener {
 /*        if (sensorData == null || sensorData.size() == 0) {
             btnUpload.setEnabled(false);
         }
-*/        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+*/
         preflistener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -145,8 +147,8 @@ public class MainActivity extends Activity implements OnClickListener {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            long[] vpatternf = {0, 63, 37, 63, 137, 100, 137, 63, 137, 100};
-            long[] vpatternb = {0, 125, 28, 125, 28, 113, 28, 43, 10, 113, 28};
+            long[] vpatternf = {200, 200, 200, 200, 200};
+            long[] vpatternb = {500,500 };
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if ((lAccelHandler.getLongTermAverage() > 3.5) && vibrateFwdOn) {
                 v.vibrate(vpatternf, -1);

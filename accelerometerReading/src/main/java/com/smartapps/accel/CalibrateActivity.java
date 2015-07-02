@@ -7,6 +7,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +22,10 @@ import static java.lang.StrictMath.abs;
 
 public class CalibrateActivity extends Activity implements View.OnClickListener {
 
-    private Button btnCalibrate;
+    private Button btnCalibrate,btnEnd;
     private TextView txtCalibrationMessage;
     private AccelHandler cAccelHandler;
+    private Handler cHandler;
 
 //    private SensorManager sensorManager;
 //    private ArrayList<AccelData> sensorData;
@@ -40,10 +43,13 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         setContentView(R.layout.activity_calibrate);
 
         btnCalibrate = (Button) findViewById(R.id.calibrateButton);
+        btnEnd = (Button) findViewById(R.id.endcalibratebutton);
         btnCalibrate.setOnClickListener(this);
+        btnEnd.setOnClickListener(this);
 
         txtCalibrationMessage = (TextView) findViewById(R.id.calibrationMessagetextView);
-        cAccelHandler = new AccelHandler(this, 1000);
+        cAccelHandler = new AccelHandler(this, 1000, true);
+        cHandler = new Handler();
 
     }
 
@@ -76,7 +82,11 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
             case R.id.calibrateButton:
                 btnCalibrate.setEnabled(false);
                 cAccelHandler.startAccel();
+                cHandler.postDelayed(runnable, 1000);
                 break;
+            case R.id.endcalibratebutton:
+                btnEnd.setEnabled(false);
+                this.finish();
             default:
                 break;
         }
@@ -109,6 +119,35 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         3. Stop the accelHandler and clean up
 
 */
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            long[] vpatternf = {200, 200, 200, 200, 200};
+            long[] vpatternb = {500,500 };
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(vpatternf, -1);
+            cHandler.removeCallbacks(runnable);
+            if (abs(cAccelHandler.getTotalX()) > abs(cAccelHandler.getTotalY())) {
+                if (cAccelHandler.getTotalX() > 0) {
+                    MainActivity.oriented = 1;
+                    txtCalibrationMessage.setText("Left Landscape");
+                } else if (cAccelHandler.getTotalX() < 0) {
+                    MainActivity.oriented = 2;
+                    txtCalibrationMessage.setText("Right Landscape");
+                }
+            }
+            else
+            {
+                MainActivity.oriented = 3;
+                txtCalibrationMessage.setText("Portrait");
+            }
+
+//            cHandler.postDelayed(this,1000);
+        }
+    };
+
+
 /*  @Override
     public void onSensorChanged(SensorEvent event) {
         if (started) {

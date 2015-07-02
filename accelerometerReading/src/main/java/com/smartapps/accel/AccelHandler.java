@@ -20,12 +20,21 @@ public class AccelHandler implements SensorEventListener{
     private double LongTermAverage = 0;
     private int sampleTime = 1000;
     private Sensor accel;
+    private boolean calFlag = false;
+    private double totalX, totalY, totalZ = 0;
 
     public AccelHandler(Context mContext,int sampleTime){
         this.mContext = mContext;
         this.sampleTime = sampleTime;
         sensorManager = (SensorManager)mContext.getSystemService(Context.SENSOR_SERVICE);
     }
+    public AccelHandler(Context mContext,int sampleTime, boolean calFlag){
+        this.mContext = mContext;
+        this.sampleTime = sampleTime;
+        this.calFlag = calFlag;
+        sensorManager = (SensorManager)mContext.getSystemService(Context.SENSOR_SERVICE);
+    }
+
 
 
     public void startAccel(){
@@ -61,6 +70,18 @@ public class AccelHandler implements SensorEventListener{
         return LongTermAverage;
     }
 
+    public double getTotalX(){
+        return totalX;
+    }
+
+    public double getTotalY(){
+        return totalY;
+    }
+
+    public double getTotalZ(){
+        return totalZ;
+    }
+
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -70,6 +91,11 @@ public class AccelHandler implements SensorEventListener{
                 double x = event.values[0];
                 double y = event.values[1];
                 double z = event.values[2];
+                if (calFlag == true){
+                    totalX += x;
+                    totalY += y;
+                    totalZ += z;
+                }
                 // Simple converging average for proof of concept
                 LongTermAverage += z;
                 LongTermAverage /= 2;
