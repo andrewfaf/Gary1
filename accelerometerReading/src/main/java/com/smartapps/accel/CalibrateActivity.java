@@ -101,6 +101,14 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         cAccelHandler.stopAccel();
     }
 
+
+// to do
+/* Add some kind of listener method that fires after a set time to:
+        1. Figure out what orientation the phone will be used in
+        2. Figure out the Threshold values
+        3. Stop the accelHandler and clean up
+
+*/
 /*  @Override
     public void onSensorChanged(SensorEvent event) {
         if (started) {

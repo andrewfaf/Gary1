@@ -10,6 +10,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -29,6 +30,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import java.util.ArrayList;
 
+
 public class MainActivity extends Activity implements OnClickListener {
     private Button btnStart, btnStop, btnUpload;
     private TextView txtAvg, xAxis, yAxis, zAxis;
@@ -45,6 +47,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private SharedPreferences.OnSharedPreferenceChangeListener preflistener;
     public static char oriented = 0;
     private AccelHandler lAccelHandler;
+    Handler mHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class MainActivity extends Activity implements OnClickListener {
         btnUpload.setOnClickListener(this);
         btnStart.setEnabled(true);
         btnStop.setEnabled(false);
+        mHandler = new Handler();
 /*        if (sensorData == null || sensorData.size() == 0) {
             btnUpload.setEnabled(false);
         }
@@ -133,6 +137,25 @@ public class MainActivity extends Activity implements OnClickListener {
         }
 */    }
 
+// to do
+/* Add some kind of listener method that fires periodically to:
+        1. Check the Thresholds and vibrate accordingly
+*/
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            long[] vpatternf = {0, 63, 37, 63, 137, 100, 137, 63, 137, 100};
+            long[] vpatternb = {0, 125, 28, 125, 28, 113, 28, 43, 10, 113, 28};
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            if ((lAccelHandler.getLongTermAverage() > 3.5) && vibrateFwdOn) {
+                v.vibrate(vpatternf, -1);
+            } else if ((lAccelHandler.getLongTermAverage() < -1.5) && vibrateBwdOn) {
+                v.vibrate(vpatternb, -1);
+            }
+            mHandler.postDelayed(this,1000);
+        }
+    };
 
 /*    @Override
     public void onSensorChanged(SensorEvent event) {
@@ -178,6 +201,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnStop.setEnabled(true);
                 btnUpload.setEnabled(false);
                 lAccelHandler.startAccel();
+                mHandler.postDelayed(runnable, 1000);
 /*
                 sensorData = new ArrayList<AccelData>();
                 // save prev data if available
@@ -193,6 +217,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnStop.setEnabled(false);
                 btnUpload.setEnabled(true);
                 lAccelHandler.stopAccel();
+                mHandler.removeCallbacks(runnable);
 /*
                 started = false;
                 sensorManager.unregisterListener(this);

@@ -57,6 +57,9 @@ public class AccelHandler implements SensorEventListener{
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
+    public double getLongTermAverage(){
+        return LongTermAverage;
+    }
 
 
     @Override
