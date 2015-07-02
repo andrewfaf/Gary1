@@ -82,6 +82,17 @@ public class AccelHandler implements SensorEventListener{
         return totalZ;
     }
 
+    public void setTotalX(double x){
+        totalX = x;
+    }
+
+    public void setTotalY(double y){
+        totalY = y;
+    }
+
+    public void setTotalZ(double z){
+        totalZ = z;
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {

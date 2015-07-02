@@ -5,10 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -28,17 +24,10 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
-import java.util.ArrayList;
-
 
 public class MainActivity extends Activity implements OnClickListener {
     private Button btnStart, btnStop, btnUpload;
     private TextView txtAvg, xAxis, yAxis, zAxis;
-//    private boolean started = false;
-//    private SensorManager sensorManager;
-//    private long lastSaved = System.currentTimeMillis();
-//    private double LongTermAverage = 0;
-//    private ArrayList<AccelData> sensorData;
     private LinearLayout layout;
     private View mChart;
     public static boolean vibrateFwdOn = true;
@@ -54,12 +43,10 @@ public class MainActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         layout = (LinearLayout) findViewById(R.id.chart_container);
-//        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-//        sensorData = new ArrayList<AccelData>();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         lAccelHandler = new AccelHandler(this,
-                Integer.parseInt(sharedPrefs.getString("updates_interval", "1000")), false);
+                Integer.parseInt(sharedPrefs.getString("updates_interval", "1000")));
 
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStop = (Button) findViewById(R.id.btnStop);
@@ -74,10 +61,7 @@ public class MainActivity extends Activity implements OnClickListener {
         btnStart.setEnabled(true);
         btnStop.setEnabled(false);
         mHandler = new Handler();
-/*        if (sensorData == null || sensorData.size() == 0) {
-            btnUpload.setEnabled(false);
-        }
-*/
+
         preflistener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -125,30 +109,27 @@ public class MainActivity extends Activity implements OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
-//		if (started == true) {
-//			sensorManager.unregisterListener(this);
-//		}
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         lAccelHandler.stopAccel();
-/*        if (started == true) {
-            sensorManager.unregisterListener(this);
-        }
-*/    }
-
-// to do
-/* Add some kind of listener method that fires periodically to:
-        1. Check the Thresholds and vibrate accordingly
-*/
+    }
 
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
             long[] vpatternf = {200, 200, 200, 200, 200};
             long[] vpatternb = {500,500 };
+
+            txtAvg.setText(String.format("%.2f", lAccelHandler.getLongTermAverage()));
+            xAxis.setText("X-Axis = " + String.format("%.2f", lAccelHandler.getTotalX()));
+            yAxis.setText("Y-Axis = " + String.format("%.2f", lAccelHandler.getTotalY()));
+            zAxis.setText("Z-Axis = " + String.format("%.2f", lAccelHandler.getTotalZ()));
+            lAccelHandler.setTotalX(0);
+            lAccelHandler.setTotalY(0);
+            lAccelHandler.setTotalZ(0);
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if ((lAccelHandler.getLongTermAverage() > 3.5) && vibrateFwdOn) {
                 v.vibrate(vpatternf, -1);
@@ -159,42 +140,6 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     };
 
-/*    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (started) {
-            if ((System.currentTimeMillis() - lastSaved) > Integer.parseInt(sharedPrefs.getString("updates_interval", "1000"))) {
-                lastSaved = System.currentTimeMillis();
-                double x = event.values[0];
-                double y = event.values[1];
-                double z = event.values[2];
-                long[] vpatternf = {0, 63, 37, 63, 137, 100, 137, 63, 137, 100};
-                long[] vpatternb = {0, 125, 28, 125, 28, 113, 28, 43, 10, 113, 28};
-                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                // Simple converging average for proof of concept
-                LongTermAverage += z;
-                LongTermAverage /= 2;
-                long timestamp = System.currentTimeMillis();
-                //			AccelData data = new AccelData(timestamp, x, y, z);
-                AccelData data = new AccelData(timestamp, LongTermAverage, y, z);
-                sensorData.add(data);
-                txtAvg.setText(String.format("%.2f", LongTermAverage));
-                xAxis.setText("X-Axis = " + String.format("%.2f", x*1000));
-                yAxis.setText("Y-Axis = " + String.format("%.2f", y*1000));
-                zAxis.setText("Z-Axis = " + String.format("%.2f", z*1000));
-
-                vibrateFwdOn = sharedPrefs.getBoolean("checkBoxFwd", true);
-                vibrateBwdOn = sharedPrefs.getBoolean("checkBoxBwd", true);
-
-                if ((LongTermAverage > 3.5) && vibrateFwdOn) {
-                    v.vibrate(vpatternf, -1);
-                } else if ((LongTermAverage < -1.5) && vibrateBwdOn) {
-                    v.vibrate(vpatternb, -1);
-                }
-            }
-        }
-
-    }
-*/
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -204,15 +149,6 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnUpload.setEnabled(false);
                 lAccelHandler.startAccel();
                 mHandler.postDelayed(runnable, 1000);
-/*
-                sensorData = new ArrayList<AccelData>();
-                // save prev data if available
-                started = true;
-                Sensor accel = sensorManager
-                        .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                sensorManager.registerListener(this, accel,
-                        SensorManager.SENSOR_DELAY_NORMAL);
-*/
                 break;
             case R.id.btnStop:
                 btnStart.setEnabled(true);
@@ -220,10 +156,6 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnUpload.setEnabled(true);
                 lAccelHandler.stopAccel();
                 mHandler.removeCallbacks(runnable);
-/*
-                started = false;
-                sensorManager.unregisterListener(this);
-*/
                 layout.removeAllViews();
                 openChart();
 
