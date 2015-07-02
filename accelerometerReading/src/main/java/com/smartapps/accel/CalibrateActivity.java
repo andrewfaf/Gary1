@@ -7,7 +7,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,13 +22,15 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
 
     private Button btnCalibrate;
     private TextView txtCalibrationMessage;
-    private SensorManager sensorManager;
-    private ArrayList<AccelData> sensorData;
-    private boolean started = false;
-    private Sensor accel;
-    private long lastSaved = System.currentTimeMillis();
-    private long startSaved = System.currentTimeMillis();
-    private double totalX, totalY, totalZ = 0;
+    private AccelHandler cAccelHandler;
+
+//    private SensorManager sensorManager;
+//    private ArrayList<AccelData> sensorData;
+//    private boolean started = false;
+//    private Sensor accel;
+//    private long lastSaved = System.currentTimeMillis();
+//    private long startSaved = System.currentTimeMillis();
+//    private double totalX, totalY, totalZ = 0;
 
 
 
@@ -42,9 +43,7 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         btnCalibrate.setOnClickListener(this);
 
         txtCalibrationMessage = (TextView) findViewById(R.id.calibrationMessagetextView);
-
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensorData = new ArrayList<AccelData>();
+        cAccelHandler = new AccelHandler(this, 1000);
 
     }
 
@@ -76,12 +75,7 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.calibrateButton:
                 btnCalibrate.setEnabled(false);
-                sensorData = new ArrayList<AccelData>();
-                // save prev data if available
-                started = true;
-                Sensor accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                sensorManager.registerListener((SensorEventListener) this, accel,
-                        SensorManager.SENSOR_DELAY_NORMAL);
+                cAccelHandler.startAccel();
                 break;
             default:
                 break;
@@ -92,36 +86,22 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
     @Override
     protected void onResume() {
         super.onResume();
-        if (started == true) {
-            sensorManager.registerListener((SensorEventListener) this, accel,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-        }
-
+        cAccelHandler.restartAccel();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-		if (started == true) {
-			sensorManager.unregisterListener((SensorEventListener) this);
-		}
+		cAccelHandler.pauseAccel();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (started == true) {
-            sensorManager.unregisterListener((SensorEventListener) this);
-        }
+        cAccelHandler.stopAccel();
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-
-    @Override
+/*  @Override
     public void onSensorChanged(SensorEvent event) {
         if (started) {
             if ((System.currentTimeMillis() - lastSaved) > 100) {
@@ -153,5 +133,5 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         }
 
     }
-
+*/
 }

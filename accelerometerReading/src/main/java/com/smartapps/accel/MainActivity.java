@@ -29,31 +29,32 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Activity implements SensorEventListener,
-        OnClickListener {
-    private SensorManager sensorManager;
+public class MainActivity extends Activity implements OnClickListener {
     private Button btnStart, btnStop, btnUpload;
     private TextView txtAvg, xAxis, yAxis, zAxis;
-    private boolean started = false;
-    private ArrayList<AccelData> sensorData;
-    private double LongTermAverage = 0;
+//    private boolean started = false;
+//    private SensorManager sensorManager;
+//    private long lastSaved = System.currentTimeMillis();
+//    private double LongTermAverage = 0;
+//    private ArrayList<AccelData> sensorData;
     private LinearLayout layout;
     private View mChart;
     public static boolean vibrateFwdOn = true;
     public static boolean vibrateBwdOn = true;
     private SharedPreferences sharedPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener preflistener;
-    private long lastSaved = System.currentTimeMillis();
     public static char oriented = 0;
-
+    private AccelHandler lAccelHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         layout = (LinearLayout) findViewById(R.id.chart_container);
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensorData = new ArrayList<AccelData>();
+//        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+//        sensorData = new ArrayList<AccelData>();
+        lAccelHandler = new AccelHandler(this,
+                Integer.parseInt(sharedPrefs.getString("updates_interval", "1000")) );
 
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStop = (Button) findViewById(R.id.btnStop);
@@ -67,10 +68,10 @@ public class MainActivity extends Activity implements SensorEventListener,
         btnUpload.setOnClickListener(this);
         btnStart.setEnabled(true);
         btnStop.setEnabled(false);
-        if (sensorData == null || sensorData.size() == 0) {
+/*        if (sensorData == null || sensorData.size() == 0) {
             btnUpload.setEnabled(false);
         }
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+*/        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         preflistener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -126,18 +127,14 @@ public class MainActivity extends Activity implements SensorEventListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (started == true) {
+        lAccelHandler.stopAccel();
+/*        if (started == true) {
             sensorManager.unregisterListener(this);
         }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
+*/    }
 
 
-    @Override
+/*    @Override
     public void onSensorChanged(SensorEvent event) {
         if (started) {
             if ((System.currentTimeMillis() - lastSaved) > Integer.parseInt(sharedPrefs.getString("updates_interval", "1000"))) {
@@ -172,7 +169,7 @@ public class MainActivity extends Activity implements SensorEventListener,
         }
 
     }
-
+*/
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -180,6 +177,8 @@ public class MainActivity extends Activity implements SensorEventListener,
                 btnStart.setEnabled(false);
                 btnStop.setEnabled(true);
                 btnUpload.setEnabled(false);
+                lAccelHandler.startAccel();
+/*
                 sensorData = new ArrayList<AccelData>();
                 // save prev data if available
                 started = true;
@@ -187,13 +186,17 @@ public class MainActivity extends Activity implements SensorEventListener,
                         .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
                 sensorManager.registerListener(this, accel,
                         SensorManager.SENSOR_DELAY_NORMAL);
+*/
                 break;
             case R.id.btnStop:
                 btnStart.setEnabled(true);
                 btnStop.setEnabled(false);
                 btnUpload.setEnabled(true);
+                lAccelHandler.stopAccel();
+/*
                 started = false;
                 sensorManager.unregisterListener(this);
+*/
                 layout.removeAllViews();
                 openChart();
 
@@ -209,15 +212,15 @@ public class MainActivity extends Activity implements SensorEventListener,
     }
 
     private void openChart() {
-        if (sensorData != null || sensorData.size() > 0) {
-            long t = sensorData.get(0).getTimestamp();
+        if (lAccelHandler.sensorData != null || lAccelHandler.sensorData.size() > 0) {
+            long t = lAccelHandler.sensorData.get(0).getTimestamp();
             XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 
             XYSeries xSeries = new XYSeries("X");
 //			XYSeries ySeries = new XYSeries("Y");
             XYSeries zSeries = new XYSeries("Z");
 
-            for (AccelData data : sensorData) {
+            for (AccelData data : lAccelHandler.sensorData) {
                 xSeries.add(data.getTimestamp() - t, data.getX());
 //				ySeries.add(data.getTimestamp() - t, data.getY());
                 zSeries.add(data.getTimestamp() - t, data.getZ());
