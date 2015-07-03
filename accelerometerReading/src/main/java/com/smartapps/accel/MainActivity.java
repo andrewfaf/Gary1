@@ -26,7 +26,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 
 public class MainActivity extends Activity implements OnClickListener {
-    private Button btnStart, btnStop, btnUpload;
+    private Button btnStart, btnStop, btnGraph;
     private TextView txtAvg, xAxis, yAxis, zAxis;
     private LinearLayout layout;
     private View mChart;
@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        layout = (LinearLayout) findViewById(R.id.chart_container);
+        layout = (LinearLayout) findViewById(R.id.graphchart_container);
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         lAccelHandler = new AccelHandler(this,
@@ -50,14 +50,14 @@ public class MainActivity extends Activity implements OnClickListener {
 
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStop = (Button) findViewById(R.id.btnStop);
-        btnUpload = (Button) findViewById(R.id.btnUpload);
+        btnGraph = (Button) findViewById(R.id.btnGraph);
         txtAvg = (TextView) findViewById(R.id.textView);
         xAxis = (TextView) findViewById(R.id.xAxistextView);
         yAxis = (TextView) findViewById(R.id.yAxistextView);
         zAxis = (TextView) findViewById(R.id.zAxistextView);
         btnStart.setOnClickListener(this);
         btnStop.setOnClickListener(this);
-        btnUpload.setOnClickListener(this);
+        btnGraph.setOnClickListener(this);
         btnStart.setEnabled(true);
         btnStop.setEnabled(false);
         mHandler = new Handler();
@@ -78,6 +78,8 @@ public class MainActivity extends Activity implements OnClickListener {
         menu.add(Menu.NONE, 0, 0, "Change settings");
         menu.add(Menu.NONE, 1, 0, "Display settings");
         menu.add(Menu.NONE, 2, 0, "Calibrate");
+//        menu.add(Menu.NONE, 3, 0, "Graph");
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -95,6 +97,12 @@ public class MainActivity extends Activity implements OnClickListener {
             case 2:
                 startActivity(new Intent(this, CalibrateActivity.class));
                 return true;
+/*            case 3:
+                Intent i = new Intent(this, GraphActivity.class);
+                i.putExtra("data", lAccelHandler.sensorData);
+                startActivity(new Intent(this, GraphActivity.class));
+                return true;
+*/
         }
         return false;
 
@@ -146,23 +154,25 @@ public class MainActivity extends Activity implements OnClickListener {
             case R.id.btnStart:
                 btnStart.setEnabled(false);
                 btnStop.setEnabled(true);
-                btnUpload.setEnabled(false);
+                btnGraph.setEnabled(false);
                 lAccelHandler.startAccel();
                 mHandler.postDelayed(runnable, 1000);
                 break;
             case R.id.btnStop:
                 btnStart.setEnabled(true);
                 btnStop.setEnabled(false);
-                btnUpload.setEnabled(true);
+                btnGraph.setEnabled(true);
                 lAccelHandler.stopAccel();
                 mHandler.removeCallbacks(runnable);
                 layout.removeAllViews();
-                openChart();
+//                openChart();
 
                 // show data in chart
                 break;
-            case R.id.btnUpload:
-
+            case R.id.btnGraph:
+                Intent i = new Intent(this, GraphActivity.class);
+                i.putExtra("data", lAccelHandler.sensorData);
+                startActivity(i);
                 break;
             default:
                 break;

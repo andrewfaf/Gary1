@@ -48,7 +48,7 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         btnEnd.setOnClickListener(this);
 
         txtCalibrationMessage = (TextView) findViewById(R.id.calibrationMessagetextView);
-        cAccelHandler = new AccelHandler(this, 1000, true);
+        cAccelHandler = new AccelHandler(this, 1000);
         cHandler = new Handler();
 
     }

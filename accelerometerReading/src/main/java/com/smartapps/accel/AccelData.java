@@ -1,6 +1,8 @@
 package com.smartapps.accel;
 
-public class AccelData {
+import java.io.Serializable;
+
+public class AccelData implements Serializable {
 	private long timestamp;
 	private double x;
 	private double y;
@@ -43,6 +45,6 @@ public class AccelData {
 	{
 		return "t="+timestamp+", x="+x+", y="+y+", z="+z;
 	}
-	
+
 
 }
