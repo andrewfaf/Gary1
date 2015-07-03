@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -12,24 +11,15 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.achartengine.ChartFactory;
-import org.achartengine.chart.PointStyle;
-import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.model.XYSeries;
-import org.achartengine.renderer.XYMultipleSeriesRenderer;
-import org.achartengine.renderer.XYSeriesRenderer;
 
 
 public class MainActivity extends Activity implements OnClickListener {
     private Button btnStart, btnStop, btnGraph;
     private TextView txtAvg, xAxis, yAxis, zAxis;
-    private LinearLayout layout;
-    private View mChart;
     public static boolean vibrateFwdOn = true;
     public static boolean vibrateBwdOn = true;
     private SharedPreferences sharedPrefs;
@@ -42,7 +32,6 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        layout = (LinearLayout) findViewById(R.id.graphchart_container);
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         lAccelHandler = new AccelHandler(this,
@@ -78,7 +67,6 @@ public class MainActivity extends Activity implements OnClickListener {
         menu.add(Menu.NONE, 0, 0, "Change settings");
         menu.add(Menu.NONE, 1, 0, "Display settings");
         menu.add(Menu.NONE, 2, 0, "Calibrate");
-//        menu.add(Menu.NONE, 3, 0, "Graph");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -97,12 +85,6 @@ public class MainActivity extends Activity implements OnClickListener {
             case 2:
                 startActivity(new Intent(this, CalibrateActivity.class));
                 return true;
-/*            case 3:
-                Intent i = new Intent(this, GraphActivity.class);
-                i.putExtra("data", lAccelHandler.sensorData);
-                startActivity(new Intent(this, GraphActivity.class));
-                return true;
-*/
         }
         return false;
 
@@ -164,8 +146,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnGraph.setEnabled(true);
                 lAccelHandler.stopAccel();
                 mHandler.removeCallbacks(runnable);
-                layout.removeAllViews();
-//                openChart();
+//                layout.removeAllViews();
 
                 // show data in chart
                 break;
@@ -178,80 +159,6 @@ public class MainActivity extends Activity implements OnClickListener {
                 break;
         }
 
-    }
-
-    private void openChart() {
-        if (lAccelHandler.sensorData != null || lAccelHandler.sensorData.size() > 0) {
-            long t = lAccelHandler.sensorData.get(0).getTimestamp();
-            XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-
-            XYSeries xSeries = new XYSeries("X");
-//			XYSeries ySeries = new XYSeries("Y");
-            XYSeries zSeries = new XYSeries("Z");
-
-            for (AccelData data : lAccelHandler.sensorData) {
-                xSeries.add(data.getTimestamp() - t, data.getX());
-//				ySeries.add(data.getTimestamp() - t, data.getY());
-                zSeries.add(data.getTimestamp() - t, data.getZ());
-            }
-
-            dataset.addSeries(xSeries);
-//			dataset.addSeries(ySeries);
-            dataset.addSeries(zSeries);
-
-            XYSeriesRenderer xRenderer = new XYSeriesRenderer();
-            xRenderer.setColor(Color.RED);
-            xRenderer.setPointStyle(PointStyle.CIRCLE);
-            xRenderer.setFillPoints(true);
-            xRenderer.setLineWidth(1);
-            xRenderer.setDisplayChartValues(false);
-
-/*			XYSeriesRenderer yRenderer = new XYSeriesRenderer();
-            yRenderer.setColor(Color.GREEN);
-			yRenderer.setPointStyle(PointStyle.CIRCLE);
-			yRenderer.setFillPoints(true);
-			yRenderer.setLineWidth(1);
-			yRenderer.setDisplayChartValues(false);
-*/
-            XYSeriesRenderer zRenderer = new XYSeriesRenderer();
-            zRenderer.setColor(Color.BLUE);
-            zRenderer.setPointStyle(PointStyle.CIRCLE);
-            zRenderer.setFillPoints(true);
-            zRenderer.setLineWidth(3);
-            zRenderer.setDisplayChartValues(false);
-
-            XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
-/*			multiRenderer.setXLabels(0);
-			multiRenderer.setLabelsColor(Color.RED);
-			multiRenderer.setChartTitle("t vs (x,y,z)");
-			multiRenderer.setXTitle("Sensor Data");
-			multiRenderer.setYTitle("Values of Acceleration");
-			multiRenderer.setZoomButtonsVisible(true);
-			for (int i = 0; i < sensorData.size(); i++) {
-				
-				multiRenderer.addXTextLabel(i + 1, ""
-						+ (sensorData.get(i).getTimestamp() - t));
-			}
-			for (int i = 0; i < 12; i++) {
-				multiRenderer.addYTextLabel(i + 1, ""+i);
-			}
-
-*/
-            multiRenderer.addSeriesRenderer(xRenderer);
-//			multiRenderer.addSeriesRenderer(yRenderer);
-            multiRenderer.addSeriesRenderer(zRenderer);
-
-            // Getting a reference to LinearLayout of the MainActivity Layout
-
-
-            // Creating a Line Chart
-            mChart = ChartFactory.getLineChartView(getBaseContext(), dataset,
-                    multiRenderer);
-
-            // Adding the Line Chart to the LinearLayout
-            layout.addView(mChart);
-
-        }
     }
 
 }

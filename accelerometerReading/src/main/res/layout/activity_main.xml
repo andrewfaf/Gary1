@@ -40,24 +40,14 @@
         android:layout_alignParentStart="true"
         android:text="123456" />
 
-     <LinearLayout
-        android:id="@+id/graphchart_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textView"
-        android:orientation="vertical"
-        android:layout_alignParentEnd="true">
-
-    </LinearLayout>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/xAxistextView"
-        android:layout_below="@+id/graphchart_container"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/textView"/>
 
     <TextView
         android:layout_width="wrap_content"
