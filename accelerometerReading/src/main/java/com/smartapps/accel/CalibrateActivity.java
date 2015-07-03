@@ -131,54 +131,22 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
             if (abs(cAccelHandler.getTotalX()) > abs(cAccelHandler.getTotalY())) {
                 if (cAccelHandler.getTotalX() > 0) {
                     MainActivity.oriented = 1;
-                    txtCalibrationMessage.setText("Left Landscape");
+                    txtCalibrationMessage.setText("Left Landscape - Calibration value ");
                 } else if (cAccelHandler.getTotalX() < 0) {
                     MainActivity.oriented = 2;
-                    txtCalibrationMessage.setText("Right Landscape");
+                    txtCalibrationMessage.setText("Right Landscape - Calibration value ");
                 }
             }
             else
             {
                 MainActivity.oriented = 3;
-                txtCalibrationMessage.setText("Portrait");
+                txtCalibrationMessage.setText("Portrait - Calibration value ");
             }
 
+            cAccelHandler.setCalibratedZ(cAccelHandler.getLongTermAverage());
+            txtCalibrationMessage.append(String.format(" %2f", cAccelHandler.getCalibratedZ()));
 //            cHandler.postDelayed(this,1000);
         }
     };
 
-
-/*  @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (started) {
-            if ((System.currentTimeMillis() - lastSaved) > 100) {
-                lastSaved = System.currentTimeMillis();
-                double x = event.values[0];
-                double y = event.values[1];
-                double z = event.values[2];
-                totalX += x;
-                totalY += y;
-                totalZ += z;
-            }
-        }
-        if ((System.currentTimeMillis() - startSaved) > 3000) {
-            started = false;
-            sensorManager.unregisterListener((SensorEventListener) this);
-            if (abs(totalX) > abs(totalY)) {
-                if (totalX > 0) {
-                    MainActivity.oriented = 1;
-                    txtCalibrationMessage.setText("Left Landscape");
-                } else if (totalX < 0) {
-                    MainActivity.oriented = 2;
-                    txtCalibrationMessage.setText("Right Landscape");
-                }
-            }
-            else
-            {
-                MainActivity.oriented = 3;
-            }
-        }
-
-    }
-*/
 }

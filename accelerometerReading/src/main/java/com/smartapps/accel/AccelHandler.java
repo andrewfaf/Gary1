@@ -21,6 +21,8 @@ public class AccelHandler implements SensorEventListener{
     private int sampleTime = 1000;
     private Sensor accel;
     private double totalX, totalY, totalZ = 0;
+    private double calibratedZ = 0;
+
 
     public AccelHandler(Context mContext,int sampleTime){
         this.mContext = mContext;
@@ -63,6 +65,10 @@ public class AccelHandler implements SensorEventListener{
         return LongTermAverage;
     }
 
+    public double getCalibratedZ() {
+        return calibratedZ;
+    }
+
     public double getTotalX(){
         return totalX;
     }
@@ -73,6 +79,10 @@ public class AccelHandler implements SensorEventListener{
 
     public double getTotalZ(){
         return totalZ;
+    }
+
+    public void setCalibratedZ(double calibratedZ){
+        this.calibratedZ = calibratedZ;
     }
 
     public void setTotalX(double x){
@@ -86,6 +96,7 @@ public class AccelHandler implements SensorEventListener{
     public void setTotalZ(double z){
         totalZ = z;
     }
+
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -101,6 +112,7 @@ public class AccelHandler implements SensorEventListener{
                 // Simple converging average for proof of concept
                 LongTermAverage += z;
                 LongTermAverage /= 2;
+//                LongTermAverage -= calibratedZ;
                 long timestamp = System.currentTimeMillis();
                 //			AccelData data = new AccelData(timestamp, x, y, z);
                 AccelData data = new AccelData(timestamp, LongTermAverage, y, z);
