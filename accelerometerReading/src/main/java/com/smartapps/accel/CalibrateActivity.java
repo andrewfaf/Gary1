@@ -2,20 +2,15 @@ package com.smartapps.accel;
 
 import android.app.Activity;
 import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 import static java.lang.StrictMath.abs;
 
@@ -48,7 +43,7 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         btnEnd.setOnClickListener(this);
 
         txtCalibrationMessage = (TextView) findViewById(R.id.calibrationMessagetextView);
-        cAccelHandler = new AccelHandler(this, 1000);
+        cAccelHandler = new AccelHandler(this, 100);
         cHandler = new Handler();
 
     }
@@ -75,14 +70,13 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.calibrateButton:
                 btnCalibrate.setEnabled(false);
                 cAccelHandler.startAccel();
-                cHandler.postDelayed(runnable, 1000);
+                cHandler.postDelayed(crunnable, 2000);
                 break;
             case R.id.endcalibratebutton:
                 btnEnd.setEnabled(false);
@@ -120,14 +114,15 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
 
 */
 
-    private Runnable runnable = new Runnable() {
+    private Runnable crunnable = new Runnable() {
         @Override
         public void run() {
             long[] vpatternf = {200, 200, 200, 200, 200};
             long[] vpatternb = {500,500 };
+            cAccelHandler.stopAccel();
+            cHandler.removeCallbacks(crunnable);
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(vpatternf, -1);
-            cHandler.removeCallbacks(runnable);
             if (abs(cAccelHandler.getTotalX()) > abs(cAccelHandler.getTotalY())) {
                 if (cAccelHandler.getTotalX() > 0) {
                     MainActivity.oriented = 1;
@@ -143,8 +138,10 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
                 txtCalibrationMessage.setText("Portrait - Calibration value ");
             }
 
-            cAccelHandler.setCalibratedZ(cAccelHandler.getLongTermAverage());
-            txtCalibrationMessage.append(String.format(" %2f", cAccelHandler.getCalibratedZ()));
+//            cAccelHandler.setCalibratedZ(cAccelHandler.getLongTermAverage());
+            MainActivity.calibratedZ = cAccelHandler.getAverageZ();
+            txtCalibrationMessage.append(String.format(" %2f", MainActivity.calibratedZ));
+            Log.d("Gary:", "CalibratedZ " + MainActivity.calibratedZ);
 //            cHandler.postDelayed(this,1000);
         }
     };

@@ -40,7 +40,7 @@ public class AccelData implements Serializable {
 	public void setZ(double z) {
 		this.z = z;
 	}
-	
+
 	public String toString()
 	{
 		return "t="+timestamp+", x="+x+", y="+y+", z="+z;

@@ -22,21 +22,22 @@ public class MainActivity extends Activity implements OnClickListener {
     private TextView txtAvg, xAxis, yAxis, zAxis;
     public static boolean vibrateFwdOn = true;
     public static boolean vibrateBwdOn = true;
+    public static double calibratedZ = 0;
     private SharedPreferences sharedPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener preflistener;
     public static char oriented = 0;
     private AccelHandler lAccelHandler;
-    Handler mHandler;
+    Handler mHandler, vibHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
+/*
         lAccelHandler = new AccelHandler(this,
                 Integer.parseInt(sharedPrefs.getString("updates_interval", "1000")));
-
+*/
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStop = (Button) findViewById(R.id.btnStop);
         btnGraph = (Button) findViewById(R.id.btnGraph);
@@ -50,6 +51,7 @@ public class MainActivity extends Activity implements OnClickListener {
         btnStart.setEnabled(true);
         btnStop.setEnabled(false);
         mHandler = new Handler();
+        vibHandler = new Handler();
 
         preflistener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -105,13 +107,15 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onDestroy() {
         super.onDestroy();
         lAccelHandler.stopAccel();
+        mHandler.removeCallbacks(mrunnable);
+        mHandler.removeCallbacks(vibrunnable);
     }
 
-    private Runnable runnable = new Runnable() {
+    private Runnable mrunnable = new Runnable() {
         @Override
         public void run() {
-            long[] vpatternf = {200, 200, 200, 200, 200};
-            long[] vpatternb = {500,500 };
+//            long[] vpatternf = {200, 200, 200, 200, 200};
+//            long[] vpatternb = {500,500 };
 
             txtAvg.setText(String.format("%.2f", lAccelHandler.getLongTermAverage()));
             xAxis.setText("X-Axis = " + String.format("%.2f", lAccelHandler.getTotalX()));
@@ -120,15 +124,36 @@ public class MainActivity extends Activity implements OnClickListener {
             lAccelHandler.setTotalX(0);
             lAccelHandler.setTotalY(0);
             lAccelHandler.setTotalZ(0);
+/*
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if ((lAccelHandler.getLongTermAverage() > 3.5) && vibrateFwdOn) {
                 v.vibrate(vpatternf, -1);
             } else if ((lAccelHandler.getLongTermAverage() < -1.5) && vibrateBwdOn) {
                 v.vibrate(vpatternb, -1);
             }
-            mHandler.postDelayed(this,1000);
+*/
+            mHandler.postDelayed(this,500);
         }
     };
+
+
+    private Runnable vibrunnable = new Runnable() {
+        @Override
+
+        public void run() {
+            long[] vpatternf = {0, 200, 200, 200, 200, 200, 0};
+            long[] vpatternb = {0, 500, 500,0 };
+
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            if ((lAccelHandler.getLongTermAverage() > 2.5) && vibrateFwdOn) {
+                v.vibrate(vpatternf, -1);
+            } else if ((lAccelHandler.getLongTermAverage() < -2.5) && vibrateBwdOn) {
+                v.vibrate(vpatternb, -1);
+            }
+            mHandler.postDelayed(this, 5000);
+        }
+    };
+
 
     @Override
     public void onClick(View v) {
@@ -137,18 +162,22 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnStart.setEnabled(false);
                 btnStop.setEnabled(true);
                 btnGraph.setEnabled(false);
+                lAccelHandler = new AccelHandler(this,
+                        Integer.parseInt(sharedPrefs.getString("updates_interval", "1000")));
+
                 lAccelHandler.startAccel();
-                mHandler.postDelayed(runnable, 1000);
+                mHandler.post(mrunnable);
+                vibHandler.post(vibrunnable);
                 break;
             case R.id.btnStop:
                 btnStart.setEnabled(true);
                 btnStop.setEnabled(false);
                 btnGraph.setEnabled(true);
                 lAccelHandler.stopAccel();
-                mHandler.removeCallbacks(runnable);
+                mHandler.removeCallbacks(mrunnable);
+                mHandler.removeCallbacks(vibrunnable);
 //                layout.removeAllViews();
 
-                // show data in chart
                 break;
             case R.id.btnGraph:
                 Intent i = new Intent(this, GraphActivity.class);

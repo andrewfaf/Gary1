@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ public class AccelHandler implements SensorEventListener{
     private int sampleTime = 1000;
     private Sensor accel;
     private double totalX, totalY, totalZ = 0;
-    private double calibratedZ = 0;
+//    private double calibratedZ = 0;
 
 
     public AccelHandler(Context mContext,int sampleTime){
@@ -65,10 +66,10 @@ public class AccelHandler implements SensorEventListener{
         return LongTermAverage;
     }
 
-    public double getCalibratedZ() {
+/*    public double getCalibratedZ() {
         return calibratedZ;
     }
-
+*/
     public double getTotalX(){
         return totalX;
     }
@@ -80,11 +81,11 @@ public class AccelHandler implements SensorEventListener{
     public double getTotalZ(){
         return totalZ;
     }
-
+/*
     public void setCalibratedZ(double calibratedZ){
         this.calibratedZ = calibratedZ;
     }
-
+*/
     public void setTotalX(double x){
         totalX = x;
     }
@@ -97,6 +98,16 @@ public class AccelHandler implements SensorEventListener{
         totalZ = z;
     }
 
+    public double getAverageZ (){
+        Log.d("Gary:" , "Size of Sensor Data " + sensorData.size());
+        double avgZ = 0;
+        for (int i = 0; i <sensorData.size() ; i++) {
+            avgZ += sensorData.get(i).getZ();
+        }
+        avgZ /= sensorData.size();
+        Log.d("Gary:", "avgZ " + avgZ);
+        return avgZ;
+        }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -110,9 +121,9 @@ public class AccelHandler implements SensorEventListener{
                 totalY += y;
                 totalZ += z;
                 // Simple converging average for proof of concept
-                LongTermAverage += z;
+                LongTermAverage += (z - MainActivity.calibratedZ);
                 LongTermAverage /= 2;
-//                LongTermAverage -= calibratedZ;
+//                LongTermAverage -= MainActivity.calibratedZ;
                 long timestamp = System.currentTimeMillis();
                 //			AccelData data = new AccelData(timestamp, x, y, z);
                 AccelData data = new AccelData(timestamp, LongTermAverage, y, z);
