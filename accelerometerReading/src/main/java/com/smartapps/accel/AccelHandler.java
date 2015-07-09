@@ -66,6 +66,10 @@ public class AccelHandler implements SensorEventListener{
         return LongTermAverage;
     }
 
+    public void resetLongTermAverage(){
+        LongTermAverage = 0 ;
+    }
+
 /*    public double getCalibratedZ() {
         return calibratedZ;
     }

@@ -18,19 +18,9 @@ import static java.lang.StrictMath.abs;
 public class CalibrateActivity extends Activity implements View.OnClickListener {
 
     private Button btnCalibrate,btnEnd;
-    private TextView txtCalibrationMessage;
     private AccelHandler cAccelHandler;
     private Handler cHandler;
-
-//    private SensorManager sensorManager;
-//    private ArrayList<AccelData> sensorData;
-//    private boolean started = false;
-//    private Sensor accel;
-//    private long lastSaved = System.currentTimeMillis();
-//    private long startSaved = System.currentTimeMillis();
-//    private double totalX, totalY, totalZ = 0;
-
-
+    private boolean delayFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +32,6 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         btnCalibrate.setOnClickListener(this);
         btnEnd.setOnClickListener(this);
 
-        txtCalibrationMessage = (TextView) findViewById(R.id.calibrationMessagetextView);
         cAccelHandler = new AccelHandler(this, 100);
         cHandler = new Handler();
 
@@ -76,7 +65,8 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
             case R.id.calibrateButton:
                 btnCalibrate.setEnabled(false);
                 cAccelHandler.startAccel();
-                cHandler.postDelayed(crunnable, 2000);
+                delayFlag = false;
+                cHandler.postDelayed(crunnable, 1000);
                 break;
             case R.id.endcalibratebutton:
                 btnEnd.setEnabled(false);
@@ -106,19 +96,18 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
     }
 
 
-// to do
-/* Add some kind of listener method that fires after a set time to:
-        1. Figure out what orientation the phone will be used in
-        2. Figure out the Threshold values
-        3. Stop the accelHandler and clean up
-
-*/
-
     private Runnable crunnable = new Runnable() {
         @Override
         public void run() {
             long[] vpatternf = {200, 200, 200, 200, 200};
             long[] vpatternb = {500,500 };
+            Log.d("Gary:", "delayFlag" + delayFlag);
+            if(delayFlag == false){
+                delayFlag = true;
+                cHandler.postDelayed(crunnable, 2000);
+                return;
+            }
+            delayFlag = false;
             cAccelHandler.stopAccel();
             cHandler.removeCallbacks(crunnable);
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -126,23 +115,21 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
             if (abs(cAccelHandler.getTotalX()) > abs(cAccelHandler.getTotalY())) {
                 if (cAccelHandler.getTotalX() > 0) {
                     MainActivity.oriented = 1;
-                    txtCalibrationMessage.setText("Left Landscape - Calibration value ");
+                    Log.d("Gary:", "Left Landscape");
                 } else if (cAccelHandler.getTotalX() < 0) {
                     MainActivity.oriented = 2;
-                    txtCalibrationMessage.setText("Right Landscape - Calibration value ");
+                    Log.d("Gary:", "Right Landscape");
                 }
             }
             else
             {
                 MainActivity.oriented = 3;
-                txtCalibrationMessage.setText("Portrait - Calibration value ");
+                Log.d("Gary:", "Portrait");
             }
 
-//            cAccelHandler.setCalibratedZ(cAccelHandler.getLongTermAverage());
             MainActivity.calibratedZ = cAccelHandler.getAverageZ();
-            txtCalibrationMessage.append(String.format(" %2f", MainActivity.calibratedZ));
             Log.d("Gary:", "CalibratedZ " + MainActivity.calibratedZ);
-//            cHandler.postDelayed(this,1000);
+            finish();
         }
     };
 

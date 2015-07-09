@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -14,7 +15,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class MainActivity extends Activity implements OnClickListener {
@@ -28,6 +36,9 @@ public class MainActivity extends Activity implements OnClickListener {
     public static char oriented = 0;
     private AccelHandler lAccelHandler;
     Handler mHandler, vibHandler;
+
+    private File file;
+    private static final String FILENAME = "acelData";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +72,7 @@ public class MainActivity extends Activity implements OnClickListener {
             }
         };
         sharedPrefs.registerOnSharedPreferenceChangeListener(preflistener);
+
     }
 
     @Override
@@ -114,8 +126,6 @@ public class MainActivity extends Activity implements OnClickListener {
     private Runnable mrunnable = new Runnable() {
         @Override
         public void run() {
-//            long[] vpatternf = {200, 200, 200, 200, 200};
-//            long[] vpatternb = {500,500 };
 
             txtAvg.setText(String.format("%.2f", lAccelHandler.getLongTermAverage()));
             xAxis.setText("X-Axis = " + String.format("%.2f", lAccelHandler.getTotalX()));
@@ -124,14 +134,7 @@ public class MainActivity extends Activity implements OnClickListener {
             lAccelHandler.setTotalX(0);
             lAccelHandler.setTotalY(0);
             lAccelHandler.setTotalZ(0);
-/*
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            if ((lAccelHandler.getLongTermAverage() > 3.5) && vibrateFwdOn) {
-                v.vibrate(vpatternf, -1);
-            } else if ((lAccelHandler.getLongTermAverage() < -1.5) && vibrateBwdOn) {
-                v.vibrate(vpatternb, -1);
-            }
-*/
+
             mHandler.postDelayed(this,500);
         }
     };
@@ -154,7 +157,12 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     };
 
+/* ToDo
+    Need to be able to select a saved data set and graph it
+    Need to be able to select a group of data sets (or one) and email it for review
+    Need to be able to select a group of data sets (or one) and email csv formatted versions
 
+*/
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -176,6 +184,20 @@ public class MainActivity extends Activity implements OnClickListener {
                 lAccelHandler.stopAccel();
                 mHandler.removeCallbacks(mrunnable);
                 mHandler.removeCallbacks(vibrunnable);
+
+                File extDir = getExternalFilesDir(null);
+                String path = extDir.getAbsolutePath();
+//                Toast.makeText(this, path, Toast.LENGTH_LONG).show();
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat fnametime = new SimpleDateFormat("yyyy-mm-dd-kk:mm");
+
+                file = new File(extDir,FILENAME + fnametime.format(calendar.getTime()));
+                try {
+                    createFile(v);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
 //                layout.removeAllViews();
 
                 break;
@@ -189,5 +211,30 @@ public class MainActivity extends Activity implements OnClickListener {
         }
 
     }
+    public boolean checkExternalStorage(){
+        String state = Environment.getExternalStorageState();
+        if (state.equals(Environment.MEDIA_MOUNTED)){
+            return true;
+        } else if (state.equals(Environment.MEDIA_MOUNTED_READ_ONLY)){
+            Toast.makeText(this, "External Storage is read-only", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "External Storage is unavailable", Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
 
+    public void createFile(View v) throws IOException {
+        if (!checkExternalStorage()) {
+            return;
+        }
+
+        ArrayList<AccelData> sensorData = lAccelHandler.sensorData;
+        String text = sensorData.toString();
+
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(text.getBytes());
+        fos.close();
+        Toast.makeText(this, "File written to External Disk: " + sensorData.toString(), Toast.LENGTH_LONG).show();
+
+    }
 }
