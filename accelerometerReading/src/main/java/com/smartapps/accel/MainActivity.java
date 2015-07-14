@@ -35,6 +35,8 @@ public class MainActivity extends Activity implements OnClickListener {
     private TextView txtAvg, xAxis, yAxis, zAxis;
     public static boolean vibrateFwdOn = true;
     public static boolean vibrateBwdOn = true;
+    public static int fwdThreshold = 5;
+    public static int bwdThreshold = 5;
     public static double calibratedZ = 0;
     private SharedPreferences sharedPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener preflistener;
@@ -75,6 +77,12 @@ public class MainActivity extends Activity implements OnClickListener {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 vibrateFwdOn = sharedPrefs.getBoolean("checkBoxFwd", true);
                 vibrateBwdOn = sharedPrefs.getBoolean("checkBoxBwd", true);
+                Log.d("Gary:", "EditTextFwdThresh = " + Integer.parseInt(sharedPrefs.getString("EditTextFwdThresh", "5")));
+                Log.d("Gary:", "EditTextBwdThresh = " + Integer.parseInt(sharedPrefs.getString("EditTextBwdThresh", "5")));
+
+                fwdThreshold = Integer.parseInt(sharedPrefs.getString("EditTextFwdThresh", "5"));
+                bwdThreshold = Integer.parseInt(sharedPrefs.getString("EditTextBwdThresh", "5"));
+
             }
         };
         sharedPrefs.registerOnSharedPreferenceChangeListener(preflistener);
@@ -154,9 +162,9 @@ public class MainActivity extends Activity implements OnClickListener {
             long[] vpatternb = {0, 400, 200, 400, 0};
 
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            if ((lAccelHandler.getLongTermAverage() > 2.5) && vibrateFwdOn) {
+            if ((lAccelHandler.getLongTermAverage() > fwdThreshold/2) && vibrateFwdOn) {
                 v.vibrate(vpatternf, -1);
-            } else if ((lAccelHandler.getLongTermAverage() < -2.5) && vibrateBwdOn) {
+            } else if ((lAccelHandler.getLongTermAverage() < -bwdThreshold/2) && vibrateBwdOn) {
                 v.vibrate(vpatternb, -1);
             }
             mHandler.postDelayed(this, 5000);
