@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
@@ -8,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Hold Device in the orientation it will sit in your pocket, with the front of the phone facing you. When you put the phone in your pocket make sure the face of the phone is against you, i.e. the back of the phone if facing away from you."
+        android:text="When ready, press the calibrate button and place the phone where you intend to wear it during operation."
         android:id="@+id/textView2"
         />
 
@@ -16,8 +17,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Press the Start Button when ready."
+        android:text="When you feel the vibration stand in the upright position with the correct posture."
         android:id="@+id/textView3"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Wait until you feel the next vibration to indicate calibration is complete."
+        android:id="@+id/textView4"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -25,14 +33,8 @@
         android:text="Calibrate"
         android:id="@+id/calibrateButton"
         android:layout_gravity="center_horizontal"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-    <Button
-        android:layout_width="111dp"
-        android:layout_height="wrap_content"
-        android:text="Return"
-        android:id="@+id/endcalibratebutton"
-        android:layout_gravity="center_horizontal"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:clickable="true"
+        android:onClick="doCalibrate"/>
 
 </LinearLayout>

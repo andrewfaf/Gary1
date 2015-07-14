@@ -32,8 +32,7 @@ public final class R {
         public static final int btnStart=0x7f0a0006;
         public static final int btnStop=0x7f0a0007;
         public static final int buttons=0x7f0a0005;
-        public static final int calibrateButton=0x7f0a0002;
-        public static final int endcalibratebutton=0x7f0a0003;
+        public static final int calibrateButton=0x7f0a0003;
         public static final int forwardValuestextView=0x7f0a0010;
         public static final int graphchart_container=0x7f0a0004;
         public static final int menu_blue=0x7f0a0016;
@@ -44,6 +43,7 @@ public final class R {
         public static final int textView=0x7f0a0009;
         public static final int textView2=0x7f0a0000;
         public static final int textView3=0x7f0a0001;
+        public static final int textView4=0x7f0a0002;
         public static final int xAxistextView=0x7f0a000a;
         public static final int yAxistextView=0x7f0a000b;
         public static final int zAxistextView=0x7f0a000c;

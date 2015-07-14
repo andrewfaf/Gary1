@@ -15,9 +15,8 @@ import android.widget.TextView;
 import static java.lang.StrictMath.abs;
 
 
-public class CalibrateActivity extends Activity implements View.OnClickListener {
+public class CalibrateActivity extends Activity {
 
-    private Button btnCalibrate,btnEnd;
     private AccelHandler cAccelHandler;
     private Handler cHandler;
     private boolean delayFlag = false;
@@ -27,71 +26,38 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calibrate);
 
-        btnCalibrate = (Button) findViewById(R.id.calibrateButton);
-        btnEnd = (Button) findViewById(R.id.endcalibratebutton);
-        btnCalibrate.setOnClickListener(this);
-        btnEnd.setOnClickListener(this);
 
         cAccelHandler = new AccelHandler(this, 100);
         cHandler = new Handler();
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_calibrate, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.calibrateButton:
-                btnCalibrate.setEnabled(false);
-                cAccelHandler.startAccel();
-                delayFlag = false;
-                cHandler.postDelayed(crunnable, 1000);
-                break;
-            case R.id.endcalibratebutton:
-                btnEnd.setEnabled(false);
-                this.finish();
-            default:
-                break;
-        }
-
+    public void doCalibrate(View v) {
+        Log.d("Gary:", "Calibrate Activity doCalibrate");
+        cAccelHandler.startAccel();
+        delayFlag = false;
+        cHandler.postDelayed(crunnable, 1000);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("Gary:", "Calibrate Activity onResume");
         cAccelHandler.restartAccel();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("Gary:", "Calibrate Activity onPause");
 		cAccelHandler.pauseAccel();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("Gary:", "Calibrate Activity onDestroy");
         cAccelHandler.stopAccel();
     }
 
@@ -99,19 +65,19 @@ public class CalibrateActivity extends Activity implements View.OnClickListener 
     private Runnable crunnable = new Runnable() {
         @Override
         public void run() {
-            long[] vpatternf = {200, 200, 200, 200, 200};
-            long[] vpatternb = {500,500 };
-            Log.d("Gary:", "delayFlag" + delayFlag);
+            long[] vpattern = {0, 200, 100, 400, 100, 200, 0};
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            Log.d("Gary:", "delayFlag is " + delayFlag);
             if(delayFlag == false){
                 delayFlag = true;
+                v.vibrate(vpattern, -1);
                 cHandler.postDelayed(crunnable, 2000);
                 return;
             }
             delayFlag = false;
             cAccelHandler.stopAccel();
             cHandler.removeCallbacks(crunnable);
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(vpatternf, -1);
+            v.vibrate(vpattern, -1);
             if (abs(cAccelHandler.getTotalX()) > abs(cAccelHandler.getTotalY())) {
                 if (cAccelHandler.getTotalX() > 0) {
                     MainActivity.oriented = 1;

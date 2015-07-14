@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -17,9 +18,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.opencsv.CSVWriter;
+
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +42,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private AccelHandler lAccelHandler;
     Handler mHandler, vibHandler;
 
+    private CSVWriter filecsv;
     private File file;
     private static final String FILENAME = "acelData";
 
@@ -145,7 +151,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
         public void run() {
             long[] vpatternf = {0, 200, 200, 200, 200, 200, 0};
-            long[] vpatternb = {0, 500, 500,0 };
+            long[] vpatternb = {0, 400, 200, 400, 0};
 
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if ((lAccelHandler.getLongTermAverage() > 2.5) && vibrateFwdOn) {
@@ -158,9 +164,10 @@ public class MainActivity extends Activity implements OnClickListener {
     };
 
 /* ToDo
-    Need to be able to select a saved data set and graph it
+    Need to be able to select a saved data set and graph it - Done for External Memory
     Need to be able to select a group of data sets (or one) and email it for review
     Need to be able to select a group of data sets (or one) and email csv formatted versions
+    Change Calibrate to a button in the settings/Action Bar? - Done
 
 */
     @Override
@@ -185,21 +192,11 @@ public class MainActivity extends Activity implements OnClickListener {
                 mHandler.removeCallbacks(mrunnable);
                 mHandler.removeCallbacks(vibrunnable);
 
-                File extDir = getExternalFilesDir(null);
-                String path = extDir.getAbsolutePath();
-//                Toast.makeText(this, path, Toast.LENGTH_LONG).show();
-                Calendar calendar = Calendar.getInstance();
-                SimpleDateFormat fnametime = new SimpleDateFormat("yyyy-mm-dd-kk:mm");
-
-                file = new File(extDir,FILENAME + fnametime.format(calendar.getTime()));
                 try {
                     createFile(v);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-//                layout.removeAllViews();
-
                 break;
             case R.id.btnGraph:
                 Intent i = new Intent(this, GraphActivity.class);
@@ -225,16 +222,45 @@ public class MainActivity extends Activity implements OnClickListener {
 
     public void createFile(View v) throws IOException {
         if (!checkExternalStorage()) {
+            ArrayList<AccelData> sensorData = lAccelHandler.sensorData;
+            String text = sensorData.toString();
+            Log.d("Gary:", "Write to Internal SDCard");
+
+            FileOutputStream fos = openFileOutput(FILENAME, MODE_PRIVATE);
+            fos.write(text.getBytes());
+            fos.close();
+            Toast.makeText(this, "File written to Internal Disk: ", Toast.LENGTH_LONG).show();
+
             return;
         }
+
+        Log.d("Gary:", "Write to External SDCard");
 
         ArrayList<AccelData> sensorData = lAccelHandler.sensorData;
         String text = sensorData.toString();
 
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(text.getBytes());
-        fos.close();
-        Toast.makeText(this, "File written to External Disk: " + sensorData.toString(), Toast.LENGTH_LONG).show();
+        File extDir = getExternalFilesDir(null);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat fnametime = new SimpleDateFormat("yyyy-mm-dd-kk");
+        String dateString = fnametime.format(calendar.getTime());
+        file = new File(extDir,FILENAME + dateString + ".csv");
+        file.createNewFile();
+        filecsv = new CSVWriter(new FileWriter(file));
+
+        // Write Header
+        String csvText = "Timestamp#X#Y#Z";
+        String[] entries = csvText.split("#");
+        filecsv.writeNext(entries);
+
+        // Write Data
+        for (int i = 0; i < sensorData.size(); i++){
+            csvText = "" + sensorData.get(i).getTimestamp() + '#'+ sensorData.get(i).getX() + '#'+sensorData.get(i).getY() + '#'+sensorData.get(i).getZ();
+            entries = csvText.split("#");
+            filecsv.writeNext(entries);
+        }
+        filecsv.close();
+
+        Toast.makeText(this, "File written to External Disk: " + extDir, Toast.LENGTH_LONG).show();
 
     }
 }
