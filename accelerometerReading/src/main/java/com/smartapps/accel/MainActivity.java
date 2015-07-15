@@ -12,6 +12,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.view.Menu;
@@ -30,6 +32,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
+/* To Do
+
+    Save Data - Done for Saving to SDCard
+    Save Data in csv format - Done
+    Change Calibrate to a button in the settings/Action Bar? - Done
+    Check Box to keep screen on for Accelerometer to work on some Phones
+
+    Check Boxes showing correct state in Preferences Setting Menu
+    Need to be able to select a saved data set and graph it
+    Need to be able to select a group of data sets (or one) and email it for review
+    Need to be able to select a group of data sets (or one) and email csv formatted versions
+
+
+*/
+
 public class MainActivity extends Activity implements OnClickListener {
     private Button btnStart, btnStop, btnGraph;
     private TextView txtAvg, xAxis, yAxis, zAxis;
@@ -41,6 +58,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private SharedPreferences sharedPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener preflistener;
     public static char oriented = 0;
+    private static float brightness = 0.1f;
     private AccelHandler lAccelHandler;
     Handler mHandler, vibHandler;
 
@@ -52,25 +70,27 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-/*
-        lAccelHandler = new AccelHandler(this,
-                Integer.parseInt(sharedPrefs.getString("updates_interval", "1000")));
-*/
+
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStop = (Button) findViewById(R.id.btnStop);
         btnGraph = (Button) findViewById(R.id.btnGraph);
+
+        btnStart.setEnabled(true);
+        btnStop.setEnabled(false);
+
+        btnStart.setOnClickListener(this);
+        btnStop.setOnClickListener(this);
+        btnGraph.setOnClickListener(this);
+
         txtAvg = (TextView) findViewById(R.id.textView);
         xAxis = (TextView) findViewById(R.id.xAxistextView);
         yAxis = (TextView) findViewById(R.id.yAxistextView);
         zAxis = (TextView) findViewById(R.id.zAxistextView);
-        btnStart.setOnClickListener(this);
-        btnStop.setOnClickListener(this);
-        btnGraph.setOnClickListener(this);
-        btnStart.setEnabled(true);
-        btnStop.setEnabled(false);
+
         mHandler = new Handler();
         vibHandler = new Handler();
+
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         preflistener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -171,13 +191,6 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     };
 
-/* ToDo
-    Need to be able to select a saved data set and graph it - Done for External Memory
-    Need to be able to select a group of data sets (or one) and email it for review
-    Need to be able to select a group of data sets (or one) and email csv formatted versions
-    Change Calibrate to a button in the settings/Action Bar? - Done
-
-*/
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -191,6 +204,18 @@ public class MainActivity extends Activity implements OnClickListener {
                 lAccelHandler.startAccel();
                 mHandler.post(mrunnable);
                 vibHandler.post(vibrunnable);
+
+                getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+                Window w = getWindow();
+                WindowManager.LayoutParams lp = w.getAttributes();
+                brightness = lp.screenBrightness;
+//                lp.screenBrightness = lp.BRIGHTNESS_OVERRIDE_OFF;
+                lp.screenBrightness = 0.1f;
+// 1 Seems to be full brightness, 0 is off which seems to be the same as turning off the screen
+// and you can't easily turn it back on
+                w.setAttributes(lp);
+
                 break;
             case R.id.btnStop:
                 btnStart.setEnabled(true);
@@ -199,12 +224,19 @@ public class MainActivity extends Activity implements OnClickListener {
                 lAccelHandler.stopAccel();
                 mHandler.removeCallbacks(mrunnable);
                 mHandler.removeCallbacks(vibrunnable);
-
+                getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 try {
                     createFile(v);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                w = getWindow();
+                lp = w.getAttributes();
+//                lp.screenBrightness = brightness;
+                lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+                w.setAttributes(lp);
+
                 break;
             case R.id.btnGraph:
                 Intent i = new Intent(this, GraphActivity.class);

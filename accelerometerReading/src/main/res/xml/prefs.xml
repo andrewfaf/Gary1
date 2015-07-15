@@ -3,38 +3,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditTextPreference
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:key="EditTextFwdThresh"
-        android:ems="10"
-        android:id="@+id/FWDeditText"
-        android:defaultValue="5"
-        android:title="Forward Threshold"/>
-
-    <EditTextPreference
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:key="EditTextBwdThresh"
-        android:ems="10"
-        android:defaultValue="5"
-        android:id="@+id/BWDeditText"
-        android:title="Backward Threshold"/>
 
     <PreferenceCategory
         android:summary="Vibrator Behaviour"
         android:title="Settings" >
 
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:key="EditTextFwdThresh"
+            android:ems="10"
+            android:id="@+id/FWDeditText"
+            android:defaultValue="5"
+            android:title="Forward Threshold"/>
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:key="EditTextBwdThresh"
+            android:ems="10"
+            android:defaultValue="5"
+            android:id="@+id/BWDeditText"
+            android:title="Backward Threshold"/>
+
         <CheckBoxPreference
             android:key="checkBoxFwd"
             android:summary="On/Off"
+            android:defaultValue="true"
             android:title="Vibrate when Forward?" />
 
         <CheckBoxPreference
             android:key="checkBoxBwd"
             android:summary="On/Off"
+            android:defaultValue="true"
             android:title="Vibrate when Backward?" />
 
         <ListPreference
