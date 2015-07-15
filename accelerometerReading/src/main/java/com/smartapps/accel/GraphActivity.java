@@ -2,6 +2,7 @@ package com.smartapps.accel;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -76,8 +77,11 @@ public class GraphActivity extends Activity {
             zRenderer.setDisplayChartValues(false);
 
             XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
-            multiRenderer.setLabelsTextSize(val/2);
-            multiRenderer.setAxisTitleTextSize(val/2);
+            multiRenderer.setLabelsTextSize(val / 2);
+            multiRenderer.setAxisTitleTextSize(val);
+            multiRenderer.setYLabelsPadding(25f);
+            multiRenderer.setMargins(new int[] {0,50,0,0}); //Top, Left, Bottom, Right
+//            multiRenderer.setZoomButtonsVisible(true);
 /*			multiRenderer.setXLabels(0);
 			multiRenderer.setLabelsColor(Color.RED);
 			multiRenderer.setChartTitle("t vs (x,y,z)");

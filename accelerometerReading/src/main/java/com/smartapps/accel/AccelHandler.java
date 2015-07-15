@@ -105,9 +105,7 @@ public class AccelHandler implements SensorEventListener{
     public double getAverageZ (){
         Log.d("Gary:" , "Size of Sensor Data " + sensorData.size());
         double avgZ = 0;
-        for (int i = 0; i <sensorData.size() ; i++) {
-            avgZ += sensorData.get(i).getZ();
-        }
+        avgZ = totalZ;
         avgZ /= sensorData.size();
         Log.d("Gary:", "avgZ " + avgZ);
         return avgZ;
@@ -124,12 +122,11 @@ public class AccelHandler implements SensorEventListener{
                 totalX += x;
                 totalY += y;
                 totalZ += z;
+                z -= MainActivity.calibratedZ;
                 // Simple converging average for proof of concept
                 LongTermAverage += (z - MainActivity.calibratedZ);
                 LongTermAverage /= 2;
-//                LongTermAverage -= MainActivity.calibratedZ;
                 long timestamp = System.currentTimeMillis();
-                //			AccelData data = new AccelData(timestamp, x, y, z);
                 AccelData data = new AccelData(timestamp, LongTermAverage, y, z, LongTermAverage);
                 sensorData.add(data);
             }

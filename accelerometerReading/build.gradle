@@ -20,6 +20,6 @@ android {
 }
 
 dependencies {
-    compile files('libs/achartengine-1.0.0.jar')
     compile 'com.opencsv:opencsv:3.4'
+    compile 'org.achartengine:achartengine:1.2.0'
 }

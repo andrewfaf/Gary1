@@ -43,8 +43,8 @@
         <ListPreference
             android:key="updates_interval"
             android:title="Updates interval"
-            android:summary="Define how often updates will be performed"
-            android:defaultValue="1000"
+            android:summary="Define how often updates will be performed in ms"
+            android:defaultValue="5000"
             android:entries="@array/updateInterval"
             android:entryValues="@array/updateIntervalValues"
             />

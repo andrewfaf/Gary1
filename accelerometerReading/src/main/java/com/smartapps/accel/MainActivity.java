@@ -100,10 +100,10 @@ public class MainActivity extends Activity implements OnClickListener {
 
                 fwdThreshold = Integer.parseInt(sharedPrefs.getString("EditTextFwdThresh", "5"));
                 bwdThreshold = Integer.parseInt(sharedPrefs.getString("EditTextBwdThresh", "5"));
-
             }
         };
         sharedPrefs.registerOnSharedPreferenceChangeListener(preflistener);
+        Toast.makeText(this, "Calibrated Value is " + calibratedZ, Toast.LENGTH_LONG).show();
 
     }
 
@@ -156,10 +156,6 @@ public class MainActivity extends Activity implements OnClickListener {
         public void run() {
 
             txtAvg.setText(String.format("%.2f", lAccelHandler.getLongTermAverage()));
-            lAccelHandler.setTotalX(0);
-            lAccelHandler.setTotalY(0);
-            lAccelHandler.setTotalZ(0);
-
             mHandler.postDelayed(this,500);
         }
     };
@@ -178,7 +174,8 @@ public class MainActivity extends Activity implements OnClickListener {
             } else if ((lAccelHandler.getLongTermAverage() < -bwdThreshold/2) && vibrateBwdOn) {
                 v.vibrate(vpatternb, -1);
             }
-            mHandler.postDelayed(this, 5000);
+            long vbn = Long.parseLong(sharedPrefs.getString("updates_interval", "5000"));
+            mHandler.postDelayed(this,vbn);
         }
     };
 
@@ -191,8 +188,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnStart.setEnabled(false);
                 btnStop.setEnabled(true);
                 btnGraph.setEnabled(false);
-                lAccelHandler = new AccelHandler(this,
-                        Integer.parseInt(sharedPrefs.getString("updates_interval", "1000")));
+                lAccelHandler = new AccelHandler(this,500);
 
                 lAccelHandler.startAccel();
                 mHandler.post(mrunnable);

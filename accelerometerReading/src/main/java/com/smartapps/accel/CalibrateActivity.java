@@ -39,7 +39,7 @@ public class CalibrateActivity extends Activity {
         Log.d("Gary:", "Calibrate Activity doCalibrate");
         cAccelHandler.startAccel();
         delayFlag = false;
-        cHandler.postDelayed(crunnable, 1000);
+        cHandler.postDelayed(crunnable, 2000);
     }
 
     @Override
@@ -73,13 +73,14 @@ public class CalibrateActivity extends Activity {
             if(delayFlag == false){
                 delayFlag = true;
                 v.vibrate(vpattern, -1);
-                cHandler.postDelayed(crunnable, 2000);
+                cHandler.postDelayed(crunnable, 5000);
                 return;
             }
             delayFlag = false;
             cAccelHandler.stopAccel();
             cHandler.removeCallbacks(crunnable);
             v.vibrate(vpattern, -1);
+/*
             if (abs(cAccelHandler.getTotalX()) > abs(cAccelHandler.getTotalY())) {
                 if (cAccelHandler.getTotalX() > 0) {
                     MainActivity.oriented = 1;
@@ -94,6 +95,7 @@ public class CalibrateActivity extends Activity {
                 MainActivity.oriented = 3;
                 Log.d("Gary:", "Portrait");
             }
+*/
 
             MainActivity.calibratedZ = cAccelHandler.getAverageZ();
             Log.d("Gary:", "CalibratedZ " + MainActivity.calibratedZ);

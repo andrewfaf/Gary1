@@ -3,16 +3,22 @@
     <!-- From: file:/C:/Users/fraw/Documents/GitHub/Gary1/Gary1/accelerometerReading/src/main/res/values/arrays.xml -->
     <eat-comment/>
     <string-array name="updateInterval">
-        <item name="500">Every 0.5 second</item>
-        <item name="1000">Every 1 seconds</item>
-        <item name="1500">Every 1.5 seconds</item>
         <item name="2000">Every 2 seconds</item>
+        <item name="3000">Every 3 seconds</item>
+        <item name="4000">Every 4 seconds</item>
+        <item name="5000">Every 5 seconds</item>
+        <item name="7000">Every 7 seconds</item>
+        <item name="10000">Every 10 seconds</item>
+        <item name="15000">Every 15 seconds</item>
     </string-array>
     <string-array name="updateIntervalValues">
-        <item name="500">500</item>
-        <item name="1000">1000</item>
-        <item name="1500">1500</item>
         <item name="2000">2000</item>
+        <item name="3000">3000</item>
+        <item name="4000">4000</item>
+        <item name="5000">5000</item>
+        <item name="7000">7000</item>
+        <item name="10000">10000</item>
+        <item name="15000">15000</item>
     </string-array>
     <!-- From: file:/C:/Users/fraw/Documents/GitHub/Gary1/Gary1/accelerometerReading/src/main/res/values/dimens.xml -->
     <eat-comment/>
