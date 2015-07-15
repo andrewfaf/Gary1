@@ -113,8 +113,7 @@ public class MainActivity extends Activity implements OnClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         menu.add(Menu.NONE, 0, 0, "Change settings");
-        menu.add(Menu.NONE, 1, 0, "Display settings");
-        menu.add(Menu.NONE, 2, 0, "Calibrate");
+        menu.add(Menu.NONE, 1, 0, "Calibrate");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -128,9 +127,6 @@ public class MainActivity extends Activity implements OnClickListener {
                 startActivity(intent);
                 return true;
             case 1:
-                startActivity(new Intent(this, ShowSettingsActivity.class));
-                return true;
-            case 2:
                 startActivity(new Intent(this, CalibrateActivity.class));
                 return true;
         }
@@ -193,6 +189,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
     @Override
     public void onClick(View v) {
+        Window w = getWindow();
+        WindowManager.LayoutParams lp;
         switch (v.getId()) {
             case R.id.btnStart:
                 btnStart.setEnabled(false);
@@ -205,16 +203,15 @@ public class MainActivity extends Activity implements OnClickListener {
                 mHandler.post(mrunnable);
                 vibHandler.post(vibrunnable);
 
-                getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-                Window w = getWindow();
-                WindowManager.LayoutParams lp = w.getAttributes();
-                brightness = lp.screenBrightness;
-//                lp.screenBrightness = lp.BRIGHTNESS_OVERRIDE_OFF;
-                lp.screenBrightness = 0.1f;
+                if (sharedPrefs.getBoolean("checkBoxScreen", true)){
+                    w.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    lp = w.getAttributes();
+                    brightness = lp.screenBrightness;
+                    lp.screenBrightness = 0.1f;
 // 1 Seems to be full brightness, 0 is off which seems to be the same as turning off the screen
 // and you can't easily turn it back on
-                w.setAttributes(lp);
+                    w.setAttributes(lp);
+                }
 
                 break;
             case R.id.btnStop:
@@ -224,18 +221,20 @@ public class MainActivity extends Activity implements OnClickListener {
                 lAccelHandler.stopAccel();
                 mHandler.removeCallbacks(mrunnable);
                 mHandler.removeCallbacks(vibrunnable);
-                getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                if (sharedPrefs.getBoolean("checkBoxScreen", true)) {
+                    w.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    w = getWindow();
+                    lp = w.getAttributes();
+                lp.screenBrightness = brightness;
+//                    lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+                    w.setAttributes(lp);
+                }
+
                 try {
                     createFile(v);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                w = getWindow();
-                lp = w.getAttributes();
-//                lp.screenBrightness = brightness;
-                lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
-                w.setAttributes(lp);
 
                 break;
             case R.id.btnGraph:
@@ -281,7 +280,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
         File extDir = getExternalFilesDir(null);
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat fnametime = new SimpleDateFormat("yyyy-mm-dd-kk");
+        SimpleDateFormat fnametime = new SimpleDateFormat("yyyyMMdd-kkmm");
         String dateString = fnametime.format(calendar.getTime());
         file = new File(extDir,FILENAME + dateString + ".csv");
         file.createNewFile();

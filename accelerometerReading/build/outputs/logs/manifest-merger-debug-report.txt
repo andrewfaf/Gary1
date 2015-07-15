@@ -69,25 +69,21 @@ activity#com.smartapps.accel.PrefsActivity
 ADDED from AndroidManifest.xml:33:9
 	android:name
 		ADDED from AndroidManifest.xml:33:19
-activity#com.smartapps.accel.ShowSettingsActivity
-ADDED from AndroidManifest.xml:35:9
-	android:name
-		ADDED from AndroidManifest.xml:35:19
 activity#com.smartapps.accel.CalibrateActivity
-ADDED from AndroidManifest.xml:37:9
+ADDED from AndroidManifest.xml:35:9
 	android:label
-		ADDED from AndroidManifest.xml:39:13
+		ADDED from AndroidManifest.xml:37:13
 	android:name
-		ADDED from AndroidManifest.xml:38:13
+		ADDED from AndroidManifest.xml:36:13
 activity#com.smartapps.accel.GraphActivity
-ADDED from AndroidManifest.xml:41:9
+ADDED from AndroidManifest.xml:39:9
 	android:label
-		ADDED from AndroidManifest.xml:43:13
+		ADDED from AndroidManifest.xml:41:13
 	android:name
-		ADDED from AndroidManifest.xml:42:13
+		ADDED from AndroidManifest.xml:40:13
 meta-data#android.support.PARENT_ACTIVITY
-ADDED from AndroidManifest.xml:45:13
+ADDED from AndroidManifest.xml:43:13
 	android:value
-		ADDED from AndroidManifest.xml:47:17
+		ADDED from AndroidManifest.xml:45:17
 	android:name
-		ADDED from AndroidManifest.xml:46:17
+		ADDED from AndroidManifest.xml:44:17

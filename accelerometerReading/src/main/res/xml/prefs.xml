@@ -48,5 +48,12 @@
             android:entries="@array/updateInterval"
             android:entryValues="@array/updateIntervalValues"
             />
+
+        <CheckBoxPreference
+            android:key="checkBoxScreen"
+            android:summary="On/Off"
+            android:defaultValue="true"
+            android:title="Keep Screen On Accelerometer Bug" />
+
     </PreferenceCategory>
 </PreferenceScreen>
