@@ -2,9 +2,11 @@ package com.smartapps.accel;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -95,6 +97,10 @@ public class CalibrateActivity extends Activity {
 
             MainActivity.calibratedZ = cAccelHandler.getAverageZ();
             Log.d("Gary:", "CalibratedZ " + MainActivity.calibratedZ);
+
+            SharedPreferences sharedPrefs = getSharedPreferences("CalibratedZ",0);
+            sharedPrefs.edit().putFloat("Calibrat4edZ",(float)MainActivity.calibratedZ).apply();
+
             finish();
         }
     };

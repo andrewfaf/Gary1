@@ -39,28 +39,5 @@
         android:layout_below="@+id/buttons"
         />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/xAxistextView"
-        android:layout_below="@id/textView"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/yAxistextView"
-        android:layout_below="@+id/xAxistextView"
-/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/zAxistextView"
-        android:layout_below="@+id/yAxistextView"
-        />
-
 
 </RelativeLayout>

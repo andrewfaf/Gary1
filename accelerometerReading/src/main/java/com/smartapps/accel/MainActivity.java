@@ -49,7 +49,7 @@ import java.util.Calendar;
 
 public class MainActivity extends Activity implements OnClickListener {
     private Button btnStart, btnStop, btnGraph;
-    private TextView txtAvg, xAxis, yAxis, zAxis;
+    private TextView txtAvg;
     public static boolean vibrateFwdOn = true;
     public static boolean vibrateBwdOn = true;
     public static int fwdThreshold = 5;
@@ -83,14 +83,12 @@ public class MainActivity extends Activity implements OnClickListener {
         btnGraph.setOnClickListener(this);
 
         txtAvg = (TextView) findViewById(R.id.textView);
-        xAxis = (TextView) findViewById(R.id.xAxistextView);
-        yAxis = (TextView) findViewById(R.id.yAxistextView);
-        zAxis = (TextView) findViewById(R.id.zAxistextView);
 
         mHandler = new Handler();
         vibHandler = new Handler();
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        calibratedZ = (double)sharedPrefs.getFloat("CalibratedZ",0.0f);
 
         preflistener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -158,9 +156,6 @@ public class MainActivity extends Activity implements OnClickListener {
         public void run() {
 
             txtAvg.setText(String.format("%.2f", lAccelHandler.getLongTermAverage()));
-            xAxis.setText("X-Axis = " + String.format("%.2f", lAccelHandler.getTotalX()));
-            yAxis.setText("Y-Axis = " + String.format("%.2f", lAccelHandler.getTotalY()));
-            zAxis.setText("Z-Axis = " + String.format("%.2f", lAccelHandler.getTotalZ()));
             lAccelHandler.setTotalX(0);
             lAccelHandler.setTotalY(0);
             lAccelHandler.setTotalZ(0);

@@ -3,6 +3,8 @@ package com.smartapps.accel;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,38 +43,24 @@ public class GraphActivity extends Activity {
     }
 
     private void openChart() {
+        DisplayMetrics metrics = this.getResources().getDisplayMetrics();
+        float val = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 18, metrics);
+
         if (sensorData != null || sensorData.size() > 0) {
             long t = sensorData.get(0).getTimestamp();
             XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 
-            XYSeries xSeries = new XYSeries("X");
-//			XYSeries ySeries = new XYSeries("Y");
             XYSeries zSeries = new XYSeries("Z");
+            XYSeries longtermzSeries = new XYSeries("LongTermZ");
 
             for (AccelData data : sensorData) {
-                xSeries.add(data.getTimestamp() - t, data.getX());
-//				ySeries.add(data.getTimestamp() - t, data.getY());
                 zSeries.add(data.getTimestamp() - t, data.getZ());
+                longtermzSeries.add(data.getTimestamp() - t, data.getLongtermZ());
             }
 
-            dataset.addSeries(xSeries);
-//			dataset.addSeries(ySeries);
             dataset.addSeries(zSeries);
+            dataset.addSeries(longtermzSeries);
 
-            XYSeriesRenderer xRenderer = new XYSeriesRenderer();
-            xRenderer.setColor(Color.RED);
-            xRenderer.setPointStyle(PointStyle.CIRCLE);
-            xRenderer.setFillPoints(true);
-            xRenderer.setLineWidth(1);
-            xRenderer.setDisplayChartValues(false);
-
-/*			XYSeriesRenderer yRenderer = new XYSeriesRenderer();
-            yRenderer.setColor(Color.GREEN);
-			yRenderer.setPointStyle(PointStyle.CIRCLE);
-			yRenderer.setFillPoints(true);
-			yRenderer.setLineWidth(1);
-			yRenderer.setDisplayChartValues(false);
-*/
             XYSeriesRenderer zRenderer = new XYSeriesRenderer();
             zRenderer.setColor(Color.BLUE);
             zRenderer.setPointStyle(PointStyle.CIRCLE);
@@ -80,7 +68,16 @@ public class GraphActivity extends Activity {
             zRenderer.setLineWidth(3);
             zRenderer.setDisplayChartValues(false);
 
+            XYSeriesRenderer longtermzRenderer = new XYSeriesRenderer();
+            zRenderer.setColor(Color.RED);
+            zRenderer.setPointStyle(PointStyle.CIRCLE);
+            zRenderer.setFillPoints(true);
+            zRenderer.setLineWidth(3);
+            zRenderer.setDisplayChartValues(false);
+
             XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
+            multiRenderer.setLabelsTextSize(val/2);
+            multiRenderer.setAxisTitleTextSize(val/2);
 /*			multiRenderer.setXLabels(0);
 			multiRenderer.setLabelsColor(Color.RED);
 			multiRenderer.setChartTitle("t vs (x,y,z)");
@@ -97,12 +94,8 @@ public class GraphActivity extends Activity {
 			}
 
 */
-            multiRenderer.addSeriesRenderer(xRenderer);
-//			multiRenderer.addSeriesRenderer(yRenderer);
             multiRenderer.addSeriesRenderer(zRenderer);
-
-            // Getting a reference to LinearLayout of the MainActivity Layout
-
+            multiRenderer.addSeriesRenderer(longtermzRenderer);
 
             // Creating a Line Chart
             mChart = ChartFactory.getLineChartView(getBaseContext(), dataset,

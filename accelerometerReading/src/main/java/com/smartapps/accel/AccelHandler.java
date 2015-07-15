@@ -130,7 +130,7 @@ public class AccelHandler implements SensorEventListener{
 //                LongTermAverage -= MainActivity.calibratedZ;
                 long timestamp = System.currentTimeMillis();
                 //			AccelData data = new AccelData(timestamp, x, y, z);
-                AccelData data = new AccelData(timestamp, LongTermAverage, y, z);
+                AccelData data = new AccelData(timestamp, LongTermAverage, y, z, LongTermAverage);
                 sensorData.add(data);
             }
         }

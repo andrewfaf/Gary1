@@ -23,30 +23,23 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int BWDeditText=0x7f0a000e;
-        public static final int FWDeditText=0x7f0a000d;
-        public static final int action_settings=0x7f0a000f;
-        public static final int btnGraph=0x7f0a0008;
-        public static final int btnStart=0x7f0a0006;
-        public static final int btnStop=0x7f0a0007;
-        public static final int buttons=0x7f0a0005;
-        public static final int calibrateButton=0x7f0a0003;
-        public static final int graphchart_container=0x7f0a0004;
-        public static final int textView=0x7f0a0009;
-        public static final int textView2=0x7f0a0000;
-        public static final int textView3=0x7f0a0001;
-        public static final int textView4=0x7f0a0002;
-        public static final int xAxistextView=0x7f0a000a;
-        public static final int yAxistextView=0x7f0a000b;
-        public static final int zAxistextView=0x7f0a000c;
+        public static final int BWDeditText=0x7f09000b;
+        public static final int FWDeditText=0x7f09000a;
+        public static final int btnGraph=0x7f090008;
+        public static final int btnStart=0x7f090006;
+        public static final int btnStop=0x7f090007;
+        public static final int buttons=0x7f090005;
+        public static final int calibrateButton=0x7f090003;
+        public static final int graphchart_container=0x7f090004;
+        public static final int textView=0x7f090009;
+        public static final int textView2=0x7f090000;
+        public static final int textView3=0x7f090001;
+        public static final int textView4=0x7f090002;
     }
     public static final class layout {
         public static final int activity_calibrate=0x7f030000;
         public static final int activity_graph=0x7f030001;
         public static final int activity_main=0x7f030002;
-    }
-    public static final class menu {
-        public static final int menu_graph=0x7f090000;
     }
     public static final class string {
         public static final int action_settings=0x7f080000;
