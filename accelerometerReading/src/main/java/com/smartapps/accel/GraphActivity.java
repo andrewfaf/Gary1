@@ -44,6 +44,7 @@ public class GraphActivity extends Activity {
     }
 
     private void openChart() {
+        // Get Medium Text (18dp) size value in pixels, achartengine uses pixels, not dp
         DisplayMetrics metrics = this.getResources().getDisplayMetrics();
         float val = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 18, metrics);
 
@@ -55,8 +56,8 @@ public class GraphActivity extends Activity {
             XYSeries longtermzSeries = new XYSeries("LongTermZ");
 
             for (AccelData data : sensorData) {
-                zSeries.add(data.getTimestamp() - t, data.getZ());
-                longtermzSeries.add(data.getTimestamp() - t, data.getLongtermZ());
+                zSeries.add((data.getTimestamp() - t)/1000, data.getZ());
+                longtermzSeries.add((data.getTimestamp() - t)/1000, data.getLongtermZ());
             }
 
             dataset.addSeries(zSeries);
@@ -70,34 +71,20 @@ public class GraphActivity extends Activity {
             zRenderer.setDisplayChartValues(false);
 
             XYSeriesRenderer longtermzRenderer = new XYSeriesRenderer();
-            zRenderer.setColor(Color.RED);
-            zRenderer.setPointStyle(PointStyle.CIRCLE);
-            zRenderer.setFillPoints(true);
-            zRenderer.setLineWidth(3);
-            zRenderer.setDisplayChartValues(false);
+            longtermzRenderer.setColor(Color.RED);
+            longtermzRenderer.setPointStyle(PointStyle.DIAMOND);
+            longtermzRenderer.setFillPoints(true);
+            longtermzRenderer.setLineWidth(5);
+            longtermzRenderer.setDisplayChartValues(false);
 
             XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
             multiRenderer.setLabelsTextSize(val / 2);
             multiRenderer.setAxisTitleTextSize(val);
             multiRenderer.setYLabelsPadding(25f);
-            multiRenderer.setMargins(new int[] {0,50,0,0}); //Top, Left, Bottom, Right
-//            multiRenderer.setZoomButtonsVisible(true);
-/*			multiRenderer.setXLabels(0);
-			multiRenderer.setLabelsColor(Color.RED);
-			multiRenderer.setChartTitle("t vs (x,y,z)");
-			multiRenderer.setXTitle("Sensor Data");
-			multiRenderer.setYTitle("Values of Acceleration");
-			multiRenderer.setZoomButtonsVisible(true);
-			for (int i = 0; i < sensorData.size(); i++) {
-
-				multiRenderer.addXTextLabel(i + 1, ""
-						+ (sensorData.get(i).getTimestamp() - t));
-			}
-			for (int i = 0; i < 12; i++) {
-				multiRenderer.addYTextLabel(i + 1, ""+i);
-			}
-
-*/
+            multiRenderer.setMargins(new int[] {0,50,25,0}); //Top, Left, Bottom, Right
+            multiRenderer.setLegendTextSize(val);
+            multiRenderer.setFitLegend(true);
+            multiRenderer.setZoomEnabled(true,false);
             multiRenderer.addSeriesRenderer(zRenderer);
             multiRenderer.addSeriesRenderer(longtermzRenderer);
 

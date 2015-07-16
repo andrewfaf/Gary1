@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 /**
  * Created by fraw on 2/07/2015.
+ * Impements that accelerometer handler
  */
 public class AccelHandler implements SensorEventListener{
     Context mContext;
@@ -21,9 +22,9 @@ public class AccelHandler implements SensorEventListener{
     private double LongTermAverage = 0;
     private int sampleTime = 1000;
     private Sensor accel;
-    private double totalX, totalY, totalZ = 0;
-//    private double calibratedZ = 0;
-
+    private double totalZ = 0;
+    private double z = 0;
+    private double zcount = 0;
 
     public AccelHandler(Context mContext,int sampleTime){
         this.mContext = mContext;
@@ -34,7 +35,7 @@ public class AccelHandler implements SensorEventListener{
 
 
     public void startAccel(){
-        sensorData = new ArrayList<AccelData>();
+//        sensorData = new ArrayList<AccelData>();
         // save prev data if available
         started = true;
         accel = sensorManager
@@ -51,13 +52,13 @@ public class AccelHandler implements SensorEventListener{
     }
 
     public void pauseAccel(){
-        if (started == true) {
+        if (started) {
             sensorManager.unregisterListener(this);
         }
     }
 
     public void restartAccel(){
-        if (started == true) {
+        if (started) {
             sensorManager.registerListener(this, accel,
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
@@ -65,48 +66,15 @@ public class AccelHandler implements SensorEventListener{
     public double getLongTermAverage(){
         return LongTermAverage;
     }
-
-    public void resetLongTermAverage(){
-        LongTermAverage = 0 ;
-    }
-
-/*    public double getCalibratedZ() {
-        return calibratedZ;
-    }
-*/
-    public double getTotalX(){
-        return totalX;
-    }
-
-    public double getTotalY(){
-        return totalY;
-    }
-
-    public double getTotalZ(){
-        return totalZ;
-    }
-/*
-    public void setCalibratedZ(double calibratedZ){
-        this.calibratedZ = calibratedZ;
-    }
-*/
-    public void setTotalX(double x){
-        totalX = x;
-    }
-
-    public void setTotalY(double y){
-        totalY = y;
-    }
-
-    public void setTotalZ(double z){
-        totalZ = z;
+    public double getZ(){
+        return z;
     }
 
     public double getAverageZ (){
-        Log.d("Gary:" , "Size of Sensor Data " + sensorData.size());
-        double avgZ = 0;
+        Log.d("Gary:" , "Number of samples " + zcount);
+        double avgZ;
         avgZ = totalZ;
-        avgZ /= sensorData.size();
+        avgZ /= zcount;
         Log.d("Gary:", "avgZ " + avgZ);
         return avgZ;
         }
@@ -116,19 +84,18 @@ public class AccelHandler implements SensorEventListener{
         if (started) {
             if ((System.currentTimeMillis() - lastSaved) > sampleTime) {
                 lastSaved = System.currentTimeMillis();
-                double x = event.values[0];
-                double y = event.values[1];
-                double z = event.values[2];
-                totalX += x;
-                totalY += y;
+                z = event.values[2];
                 totalZ += z;
+                zcount += 1;
                 z -= MainActivity.calibratedZ;
                 // Simple converging average for proof of concept
-                LongTermAverage += (z - MainActivity.calibratedZ);
-                LongTermAverage /= 2;
-                long timestamp = System.currentTimeMillis();
-                AccelData data = new AccelData(timestamp, LongTermAverage, y, z, LongTermAverage);
-                sensorData.add(data);
+//                LongTermAverage += z;
+//                LongTermAverage /= 2;
+
+                LongTermAverage += (z - LongTermAverage)/(zcount);
+//                long timestamp = System.currentTimeMillis();
+//                AccelData data = new AccelData(timestamp, z, LongTermAverage);
+//                sensorData.add(data);
             }
         }
     }

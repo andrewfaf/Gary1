@@ -37,9 +37,11 @@ import java.util.Calendar;
     Save Data - Done for Saving to SDCard
     Save Data in csv format - Done
     Change Calibrate to a button in the settings/Action Bar? - Done
-    Check Box to keep screen on for Accelerometer to work on some Phones
+    Check Box to keep screen on for Accelerometer to work on some Phones - Done
+    Calibrated value is not saved to sharedPrefs. - Done
+    Labels in graph seem to be swapped. - Done
+    Check Boxes showing correct state in Preferences Setting Menu - Done
 
-    Check Boxes showing correct state in Preferences Setting Menu
     Need to be able to select a saved data set and graph it
     Need to be able to select a group of data sets (or one) and email it for review
     Need to be able to select a group of data sets (or one) and email csv formatted versions
@@ -61,6 +63,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private static float brightness = 0.1f;
     private AccelHandler lAccelHandler;
     Handler mHandler, vibHandler;
+    public ArrayList<AccelData> sensorData;
 
     private CSVWriter filecsv;
     private File file;
@@ -81,11 +84,15 @@ public class MainActivity extends Activity implements OnClickListener {
         btnStart.setOnClickListener(this);
         btnStop.setOnClickListener(this);
         btnGraph.setOnClickListener(this);
+        btnGraph.setEnabled(false);
 
         txtAvg = (TextView) findViewById(R.id.textView);
 
         mHandler = new Handler();
         vibHandler = new Handler();
+
+        sensorData = new ArrayList<AccelData>();
+        lAccelHandler = new AccelHandler(this,500);
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         calibratedZ = (double)sharedPrefs.getFloat("CalibratedZ",0.0f);
@@ -168,6 +175,10 @@ public class MainActivity extends Activity implements OnClickListener {
             long[] vpatternf = {0, 200, 200, 200, 200, 200, 0};
             long[] vpatternb = {0, 400, 200, 400, 0};
 
+                long timestamp = System.currentTimeMillis();
+                AccelData data = new AccelData(timestamp, lAccelHandler.getZ(), lAccelHandler.getLongTermAverage());
+                sensorData.add(data);
+
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if ((lAccelHandler.getLongTermAverage() > fwdThreshold/2) && vibrateFwdOn) {
                 v.vibrate(vpatternf, -1);
@@ -188,7 +199,6 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnStart.setEnabled(false);
                 btnStop.setEnabled(true);
                 btnGraph.setEnabled(false);
-                lAccelHandler = new AccelHandler(this,500);
 
                 lAccelHandler.startAccel();
                 mHandler.post(mrunnable);
@@ -230,7 +240,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 break;
             case R.id.btnGraph:
                 Intent i = new Intent(this, GraphActivity.class);
-                i.putExtra("data", lAccelHandler.sensorData);
+                i.putExtra("data", sensorData);
                 startActivity(i);
                 break;
             default:
@@ -252,7 +262,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
     public void createFile(View v) throws IOException {
         if (!checkExternalStorage()) {
-            ArrayList<AccelData> sensorData = lAccelHandler.sensorData;
+//            ArrayList<AccelData> sensorData = lAccelHandler.sensorData;
             String text = sensorData.toString();
             Log.d("Gary:", "Write to Internal SDCard");
 
@@ -266,8 +276,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
         Log.d("Gary:", "Write to External SDCard");
 
-        ArrayList<AccelData> sensorData = lAccelHandler.sensorData;
-        String text = sensorData.toString();
+//        ArrayList<AccelData> sensorData = lAccelHandler.sensorData;
+//        String text = sensorData.toString();
 
         File extDir = getExternalFilesDir(null);
         Calendar calendar = Calendar.getInstance();
@@ -278,13 +288,13 @@ public class MainActivity extends Activity implements OnClickListener {
         filecsv = new CSVWriter(new FileWriter(file));
 
         // Write Header
-        String csvText = "Timestamp#X#Y#Z";
+        String csvText = "Timestamp#Z#AvgZ";
         String[] entries = csvText.split("#");
         filecsv.writeNext(entries);
 
         // Write Data
         for (int i = 0; i < sensorData.size(); i++){
-            csvText = "" + sensorData.get(i).getTimestamp() + '#'+ sensorData.get(i).getX() + '#'+sensorData.get(i).getY() + '#'+sensorData.get(i).getZ();
+            csvText = "" + sensorData.get(i).getTimestamp() + '#'+ sensorData.get(i).getZ() + '#'+sensorData.get(i).getLongtermZ();
             entries = csvText.split("#");
             filecsv.writeNext(entries);
         }
