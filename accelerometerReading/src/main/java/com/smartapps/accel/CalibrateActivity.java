@@ -23,7 +23,7 @@ public class CalibrateActivity extends Activity {
     private Handler cHandler;
     private boolean delayFlag = false;
     private Button btnCalibrate;
-
+    private SharedPreferences sharedPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,7 @@ public class CalibrateActivity extends Activity {
         btnCalibrate = (Button) findViewById(R.id.calibrateButton);
         cAccelHandler = new AccelHandler(this, 100);
         cHandler = new Handler();
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
     }
 
@@ -86,7 +87,6 @@ public class CalibrateActivity extends Activity {
             MainActivity.calibratedZ = cAccelHandler.getAverageZ();
             Log.d("Gary:", "CalibratedZ " + MainActivity.calibratedZ);
 
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             sharedPrefs.edit().putFloat("CalibratedZ",(float)MainActivity.calibratedZ).apply();
 
             finish();

@@ -88,14 +88,10 @@ public class AccelHandler implements SensorEventListener{
                 totalZ += z;
                 zcount += 1;
                 z -= MainActivity.calibratedZ;
-                // Simple converging average for proof of concept
-//                LongTermAverage += z;
-//                LongTermAverage /= 2;
 
-                LongTermAverage += (z - LongTermAverage)/(zcount);
-//                long timestamp = System.currentTimeMillis();
-//                AccelData data = new AccelData(timestamp, z, LongTermAverage);
-//                sensorData.add(data);
+                // Moving window average
+                LongTermAverage -= LongTermAverage/3;
+                LongTermAverage += z/4;
             }
         }
     }
