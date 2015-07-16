@@ -2,12 +2,9 @@ package com.smartapps.accel;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -18,7 +15,6 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
-import java.lang.reflect.AccessibleObject;
 import java.util.ArrayList;
 
 
@@ -55,13 +51,20 @@ public class GraphActivity extends Activity {
             XYSeries zSeries = new XYSeries("Z");
             XYSeries longtermzSeries = new XYSeries("LongTermZ");
 
+            XYSeries fwdThreshSeries = new XYSeries("fwdThresh");
+            XYSeries bwdThreshSeries = new XYSeries("bwdThresh");
+
             for (AccelData data : sensorData) {
                 zSeries.add((data.getTimestamp() - t)/1000, data.getZ());
                 longtermzSeries.add((data.getTimestamp() - t)/1000, data.getLongtermZ());
+                fwdThreshSeries.add((data.getTimestamp() - t)/1000,MainActivity.fwdThreshold/2 );
+                bwdThreshSeries.add((data.getTimestamp() - t)/1000,-MainActivity.bwdThreshold/2 );
             }
 
             dataset.addSeries(zSeries);
             dataset.addSeries(longtermzSeries);
+            dataset.addSeries(fwdThreshSeries);
+            dataset.addSeries(bwdThreshSeries);
 
             XYSeriesRenderer zRenderer = new XYSeriesRenderer();
             zRenderer.setColor(Color.BLUE);
@@ -71,22 +74,38 @@ public class GraphActivity extends Activity {
             zRenderer.setDisplayChartValues(false);
 
             XYSeriesRenderer longtermzRenderer = new XYSeriesRenderer();
-            longtermzRenderer.setColor(Color.RED);
+            longtermzRenderer.setColor(Color.GREEN);
             longtermzRenderer.setPointStyle(PointStyle.DIAMOND);
             longtermzRenderer.setFillPoints(true);
             longtermzRenderer.setLineWidth(5);
             longtermzRenderer.setDisplayChartValues(false);
 
+            XYSeriesRenderer fwdThresholdRenderer = new XYSeriesRenderer();
+            fwdThresholdRenderer.setColor(Color.RED);
+            fwdThresholdRenderer.setPointStyle(PointStyle.POINT);
+            fwdThresholdRenderer.setFillPoints(true);
+            fwdThresholdRenderer.setLineWidth(3);
+            fwdThresholdRenderer.setDisplayChartValues(false);
+
+            XYSeriesRenderer bwdThresholdRenderer = new XYSeriesRenderer();
+            bwdThresholdRenderer.setColor(Color.RED);
+            bwdThresholdRenderer.setPointStyle(PointStyle.POINT);
+            bwdThresholdRenderer.setFillPoints(true);
+            bwdThresholdRenderer.setLineWidth(3);
+            bwdThresholdRenderer.setDisplayChartValues(false);
+
             XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
             multiRenderer.setLabelsTextSize(val / 2);
             multiRenderer.setAxisTitleTextSize(val);
             multiRenderer.setYLabelsPadding(25f);
-            multiRenderer.setMargins(new int[] {0,50,25,0}); //Top, Left, Bottom, Right
+            multiRenderer.setMargins(new int[]{0, 50, 25, 0}); //Top, Left, Bottom, Right
             multiRenderer.setLegendTextSize(val);
             multiRenderer.setFitLegend(true);
-            multiRenderer.setZoomEnabled(true,false);
+            multiRenderer.setZoomEnabled(true, false);
             multiRenderer.addSeriesRenderer(zRenderer);
             multiRenderer.addSeriesRenderer(longtermzRenderer);
+            multiRenderer.addSeriesRenderer(fwdThresholdRenderer);
+            multiRenderer.addSeriesRenderer(bwdThresholdRenderer);
 
             // Creating a Line Chart
             mChart = ChartFactory.getLineChartView(getBaseContext(), dataset,
