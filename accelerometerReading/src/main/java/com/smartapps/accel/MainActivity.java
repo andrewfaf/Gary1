@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,6 +41,9 @@ import java.util.Calendar;
     Labels in graph seem to be swapped. - Done
     Check Boxes showing correct state in Preferences Setting Menu - Done
 
+    Change so that file is created when Start pressed and data is appended.
+    Make sure file gets closed on exit.
+    Change to a service for phones that don't need the screen on.
     Need to be able to select a saved data set and graph it
     Need to be able to select a group of data sets (or one) and email it for review
     Need to be able to select a group of data sets (or one) and email csv formatted versions
@@ -64,6 +66,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private AccelHandler lAccelHandler;
     Handler mHandler, vibHandler;
     public ArrayList<AccelData> sensorData;
+    private boolean started = false;
 
     private CSVWriter filecsv;
     private File file;
@@ -148,6 +151,14 @@ public class MainActivity extends Activity implements OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("Gary:", "MainActivity onPause");
+        if (started) {
+            try {
+                createFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -156,7 +167,7 @@ public class MainActivity extends Activity implements OnClickListener {
         lAccelHandler.stopAccel();
         mHandler.removeCallbacks(mrunnable);
         mHandler.removeCallbacks(vibrunnable);
-    }
+   }
 
     private Runnable mrunnable = new Runnable() {
         @Override
@@ -201,6 +212,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnGraph.setEnabled(false);
 
                 lAccelHandler.startAccel();
+                started = true;
                 mHandler.post(mrunnable);
                 vibHandler.post(vibrunnable);
 
@@ -220,6 +232,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 btnStop.setEnabled(false);
                 btnGraph.setEnabled(true);
                 lAccelHandler.stopAccel();
+                started = false;
                 mHandler.removeCallbacks(mrunnable);
                 mHandler.removeCallbacks(vibrunnable);
                 if (sharedPrefs.getBoolean("checkBoxScreen", true)) {
@@ -232,7 +245,8 @@ public class MainActivity extends Activity implements OnClickListener {
                 }
 
                 try {
-                    createFile(v);
+//                    createFile(v);
+                    createFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -260,14 +274,21 @@ public class MainActivity extends Activity implements OnClickListener {
         return false;
     }
 
-    public void createFile(View v) throws IOException {
+//    public void createFile(View v) throws IOException {
+        public void createFile() throws IOException {
         if (!checkExternalStorage()) {
 //            ArrayList<AccelData> sensorData = lAccelHandler.sensorData;
-            String text = sensorData.toString();
             Log.d("Gary:", "Write to Internal SDCard");
 
-            FileOutputStream fos = openFileOutput(FILENAME, MODE_PRIVATE);
-            fos.write(text.getBytes());
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat fnametime = new SimpleDateFormat("yyyyMMdd-kkmm");
+            String dateString = fnametime.format(calendar.getTime());
+
+            FileOutputStream fos = openFileOutput(FILENAME + dateString + ".csv", MODE_PRIVATE);
+            for(int i = 0; i < sensorData.size(); i++) {
+                String text = sensorData.get(i).toCsv();
+                fos.write(text.getBytes());
+            }
             fos.close();
             Toast.makeText(this, "File written to Internal Disk: ", Toast.LENGTH_LONG).show();
 

@@ -30,6 +30,9 @@ public class AccelData implements Serializable {
 	{
 		return "t="+timestamp+", z="+z+", longtermz="+longtermz;
 	}
-
+	public String toCsv()
+{
+	return (timestamp+","+z+","+longtermz+"\n");
+}
 
 }
