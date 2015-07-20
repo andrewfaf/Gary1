@@ -1,4 +1,4 @@
-package com.smartapps.accel;
+package com.tooloom.accel;
 
 import android.content.Context;
 import android.hardware.Sensor;

@@ -1,4 +1,4 @@
-package com.smartapps.accel;
+package com.tooloom.accel;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -7,6 +7,8 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import com.smartapps.accel.R;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.chart.PointStyle;

@@ -1,4 +1,4 @@
-package com.smartapps.accel;
+package com.tooloom.accel;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,11 +8,10 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+
+import com.smartapps.accel.R;
 
 import static java.lang.StrictMath.abs;
 

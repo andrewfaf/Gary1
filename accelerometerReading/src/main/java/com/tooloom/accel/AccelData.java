@@ -1,4 +1,4 @@
-package com.smartapps.accel;
+package com.tooloom.accel;
 
 import java.io.Serializable;
 

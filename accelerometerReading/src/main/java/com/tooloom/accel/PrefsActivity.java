@@ -1,7 +1,9 @@
-package com.smartapps.accel;
+package com.tooloom.accel;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import com.smartapps.accel.R;
 
 /**
  * Created by fraw on 9/06/2015.

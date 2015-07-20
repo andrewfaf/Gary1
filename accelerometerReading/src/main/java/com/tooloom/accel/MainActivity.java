@@ -1,4 +1,4 @@
-package com.smartapps.accel;
+package com.tooloom.accel;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.opencsv.CSVWriter;
+import com.smartapps.accel.R;
 
 import java.io.File;
 import java.io.FileOutputStream;

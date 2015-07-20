@@ -22,7 +22,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.tooloom.accel.MainActivity"
             android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -30,19 +30,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".PrefsActivity">
+        <activity android:name="com.tooloom.accel.PrefsActivity">
         </activity>
         <activity
-            android:name=".CalibrateActivity"
+            android:name="com.tooloom.accel.CalibrateActivity"
             android:label="@string/title_activity_calibrate">
         </activity>
         <activity
-            android:name=".GraphActivity"
+            android:name="com.tooloom.accel.GraphActivity"
             android:label="@string/title_activity_graph"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.smartapps.accel.MainActivity"/>
+                android:value="com.tooloom.accel.MainActivity"/>
         </activity>
     </application>
 

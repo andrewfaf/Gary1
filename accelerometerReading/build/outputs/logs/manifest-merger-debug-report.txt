@@ -7,8 +7,12 @@ ADDED from AndroidManifest.xml:2:1
 		INJECTED from AndroidManifest.xml:0:0
 	android:versionName
 		ADDED from AndroidManifest.xml:5:11
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
 	android:versionCode
 		ADDED from AndroidManifest.xml:4:11
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
 	xmlns:android
 		ADDED from AndroidManifest.xml:3:11
 uses-sdk
@@ -49,7 +53,7 @@ ADDED from AndroidManifest.xml:20:7
 		ADDED from AndroidManifest.xml:21:9
 	android:theme
 		ADDED from AndroidManifest.xml:23:9
-activity#com.smartapps.accel.MainActivity
+activity#com.tooloom.accel.MainActivity
 ADDED from AndroidManifest.xml:24:9
 	android:label
 		ADDED from AndroidManifest.xml:26:13
@@ -65,17 +69,17 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:30:17
 	android:name
 		ADDED from AndroidManifest.xml:30:27
-activity#com.smartapps.accel.PrefsActivity
+activity#com.tooloom.accel.PrefsActivity
 ADDED from AndroidManifest.xml:33:9
 	android:name
 		ADDED from AndroidManifest.xml:33:19
-activity#com.smartapps.accel.CalibrateActivity
+activity#com.tooloom.accel.CalibrateActivity
 ADDED from AndroidManifest.xml:35:9
 	android:label
 		ADDED from AndroidManifest.xml:37:13
 	android:name
 		ADDED from AndroidManifest.xml:36:13
-activity#com.smartapps.accel.GraphActivity
+activity#com.tooloom.accel.GraphActivity
 ADDED from AndroidManifest.xml:39:9
 	android:label
 		ADDED from AndroidManifest.xml:41:13
